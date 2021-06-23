@@ -11,13 +11,29 @@ public class Player : MonoBehaviour
     [SerializeField] float  default_JumpForce = 100;
     [SerializeField] float  max_JumpForce = 123;
 
+    [SerializeField] float  horForce = 80;
+    [SerializeField] float  verForce = 100;
+
     Rigidbody2D             _rig;
     BoxCollider2D           _col2D;
+    Animator                _ani;
 
     private bool            isGround = false;
+    private bool            isHit = false;
 
-    float                   hitDelay = 0.7f;
+    float                   hitDelay = 1f;
     float                   hitTimer = 0;
+
+    int                     lv = 1;
+
+    int                     exp = 0;
+    int[]                   maxExp = new int[9] { 15, 34, 57, 92, 135, 372, 560, 840, 1242};
+
+    float                   maxHp = 50;
+    float                   curHp = 50;
+
+    float                   maxMp = 50;
+    float                   curMp = 50;
 
     public static Player instance;
 
@@ -25,33 +41,59 @@ public class Player : MonoBehaviour
     {
         _rig = GetComponent<Rigidbody2D>();
         _col2D = GetComponent<BoxCollider2D>();
+        _ani = GetComponent<Animator>();
 
         instance = this;
     }
 
     void Start()
     {
-        
+
+    }
+
+    void Update()
+    {
+        if (hitTimer > 0)
+        {
+            hitTimer -= Time.deltaTime;
+        }
     }
 
     void FixedUpdate()
     {
         Move();
         Jump();
-
-        if( hitTimer > 0)
-        {
-            hitTimer -= Time.deltaTime;
-        }
     }
 
     private void Move()
     {
+        float moveH = Input.GetAxis("Horizontal");
+
         if (isGround == true)
         {
-            float moveH = Input.GetAxis("Horizontal");
-
             _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed, _rig.velocity.y);
+
+            if (moveH != 0)
+            {
+                _ani.SetBool("IsMove", true);
+            }
+            else
+            {
+                _ani.SetBool("IsMove", false);
+            }
+
+            if(moveH > 0)
+            {
+                transform.rotation = new Quaternion(0, 0, 0, 0);
+            }
+            else if (moveH < 0)
+            {
+                transform.rotation = new Quaternion(0, 180, 0, 0);
+            }
+        }
+        else 
+        {
+            _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed * 0.005f + _rig.velocity.x, _rig.velocity.y);
         }
     }
 
@@ -59,11 +101,13 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButton("Jump") && isGround == true)
         {
-            _rig.velocity = new Vector2(_rig.velocity.x, Time.deltaTime * default_JumpForce * 3.2f);
+            _rig.velocity = new Vector2(_rig.velocity.x, default_JumpForce * 0.05f);
+            _ani.SetBool("IsJump", true);
 
             isGround = false;       
         }
 
+        // 점프중에 바닥의 콜라이더에 막히는것을 방지
         if (_rig.velocity.y > 0)
         {
             CheckJumped.instance._col2D.enabled = false;
@@ -72,30 +116,98 @@ public class Player : MonoBehaviour
         {
             CheckJumped.instance._col2D.enabled = true;
         }
-
-        //Debug.Log(_rig.velocity.y);
     }
 
     public void setIsJumped(bool value)
     {
         isGround = value;
+
+        if(isGround == true)
+        {
+            _ani.SetBool("IsJump", false);
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == "DamageZone" && hitTimer <= 0)
         {
+            isGround = false;            
+
             if (collision.transform.position.x < transform.position.x)
             {
-                _rig.velocity = new Vector2(Time.deltaTime * 100, Time.deltaTime * 100);
+                StartCoroutine(Hitjudgment(1));
+                //_rig.velocity = new Vector2(Time.deltaTime * 100 - _rig.velocity.x * 100, Time.deltaTime * 100 + _rig.velocity.y);
             }
 
             if (collision.transform.position.x > transform.position.x)
             {
-                _rig.velocity = new Vector2(Time.deltaTime * (-100), Time.deltaTime * 100);
+                //_rig.AddForce(new Vector2(Time.deltaTime * (-horForce) - _rig.velocity.x * 100, Time.deltaTime * verForce), ForceMode2D.Impulse);
+                StartCoroutine(Hitjudgment(-1));
+
+                Debug.Log(Time.deltaTime * verForce);
             }
-            isGround = false;
+
             hitTimer = hitDelay;
         }
+    }
+
+    IEnumerator Hitjudgment(int directionX, float verForce = 120, float horForce = 80)
+    {
+        _rig.AddForce(new Vector2(0, verForce), ForceMode2D.Force);
+
+        yield return new WaitForSeconds(0.05f);
+
+        _rig.AddForce(new Vector2(horForce * directionX, 0), ForceMode2D.Force);
+    }
+
+    public void OnDamage(float damage)
+    {
+        curHp -= damage;
+
+        if (curHp <= 0)
+        {
+            curHp = 0;
+        }
+    }
+
+    public int GetLv()
+    {
+        return lv;
+    }
+
+    public int GetExp()
+    {
+        return exp;
+    }
+
+    public int GetMaxExp(int lv)
+    {
+        return maxExp[lv];
+    }
+
+    public float GetHp()
+    {
+        return curHp;
+    }
+
+    public float GetMaxHp()
+    {
+        return maxHp;
+    }
+
+    public float GetMp()
+    {
+        return curMp;
+    }
+
+    public float GetMaxMp()
+    {
+        return maxMp;
+    }
+
+    public float GetHitTimer()
+    {
+        return hitTimer;
     }
 }

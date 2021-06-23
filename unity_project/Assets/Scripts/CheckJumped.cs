@@ -30,8 +30,6 @@ public class CheckJumped : MonoBehaviour
         if (collision.transform.tag == "Ground")
         {
             Player.instance.setIsJumped(true);
-
-            Debug.Log(1);
         }
     }
 
@@ -40,8 +38,6 @@ public class CheckJumped : MonoBehaviour
         if (collision.transform.tag == "Ground")
         {
             Player.instance.setIsJumped(false);
-
-            Debug.Log(2);
         }
     }
 }
