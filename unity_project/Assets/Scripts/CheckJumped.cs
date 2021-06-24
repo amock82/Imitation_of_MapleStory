@@ -27,9 +27,13 @@ public class CheckJumped : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Ground")
+        if (Player.instance.GetIsClimb() == true)
         {
-            Player.instance.setIsJumped(true);
+            Player.instance.setIsGround(false);
+        }
+        else if (collision.transform.tag == "Ground")
+        {
+            Player.instance.setIsGround(true);
         }
     }
 
@@ -37,7 +41,7 @@ public class CheckJumped : MonoBehaviour
     {
         if (collision.transform.tag == "Ground")
         {
-            Player.instance.setIsJumped(false);
+            Player.instance.setIsGround(false);
         }
     }
 }

@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
 
     private bool            isGround = false;
     private bool            isHit = false;
+    private bool            isclimb = false;
 
     float                   hitDelay = 1f;
     float                   hitTimer = 0;
@@ -63,13 +64,15 @@ public class Player : MonoBehaviour
     {
         Move();
         Jump();
+
     }
 
     private void Move()
     {
         float moveH = Input.GetAxis("Horizontal");
+        float moveV = Input.GetAxis("Vertical");
 
-        if (isGround == true)
+        if (isGround == true && isclimb == false)
         {
             _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed, _rig.velocity.y);
 
@@ -91,15 +94,33 @@ public class Player : MonoBehaviour
                 transform.rotation = new Quaternion(0, 180, 0, 0);
             }
         }
-        else 
+        else if (isGround == false && isclimb == false)
         {
             _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed * 0.005f + _rig.velocity.x, _rig.velocity.y);
+        }
+        else if (isclimb == true)
+        {
+            _rig.velocity = new Vector2(0, moveV * Time.deltaTime * default_Speed);
+
+            CheckJumped.instance._col2D.enabled = false;
         }
     }
 
     private void Jump()
     {
-        if (Input.GetButton("Jump") && isGround == true)
+        float moveH = Input.GetAxis("Horizontal");
+
+        if (moveH > 0)
+        {
+            moveH = 1;
+        }
+        else if(moveH < 0)
+        {
+            moveH = -1;
+        }
+        
+
+        if (Input.GetButton("Jump") && isGround == true && isclimb == false)
         {
             _rig.velocity = new Vector2(_rig.velocity.x, default_JumpForce * 0.05f);
             _ani.SetBool("IsJump", true);
@@ -107,24 +128,21 @@ public class Player : MonoBehaviour
             isGround = false;       
         }
 
+        if (Input.GetButton("Jump") && isclimb == true && moveH != 0)
+        {
+            isclimb = false;
+
+            _rig.velocity = new Vector2(2 * moveH, default_JumpForce * 0.025f);
+        }
+
         // 점프중에 바닥의 콜라이더에 막히는것을 방지
-        if (_rig.velocity.y > 0)
+        if ((_rig.velocity.y > 0 && isGround == false) || isclimb == true)
         {
             CheckJumped.instance._col2D.enabled = false;
         }
         else
         {
             CheckJumped.instance._col2D.enabled = true;
-        }
-    }
-
-    public void setIsJumped(bool value)
-    {
-        isGround = value;
-
-        if(isGround == true)
-        {
-            _ani.SetBool("IsJump", false);
         }
     }
 
@@ -149,6 +167,30 @@ public class Player : MonoBehaviour
             }
 
             hitTimer = hitDelay;
+        }
+
+        if (collision.tag == "Ladder")
+        {
+            float moveV = Input.GetAxis("Vertical");
+
+            if (moveV > 0 || moveV < 0)
+            {
+                isclimb = true;
+
+                transform.position = new Vector2(collision.GetComponent<BoxCollider2D>().offset.x, transform.position.y);
+
+                CheckJumped.instance._col2D.enabled = false;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Ladder" && isclimb == true)
+        {
+            isclimb = false;
+
+            _rig.velocity = new Vector2(_rig.velocity.x, 0);
         }
     }
 
@@ -209,5 +251,20 @@ public class Player : MonoBehaviour
     public float GetHitTimer()
     {
         return hitTimer;
+    }
+
+    public bool GetIsClimb()
+    {
+        return isclimb;
+    }
+
+    public void setIsGround(bool value)
+    {
+        isGround = value;
+
+        if (isGround == true)
+        {
+            _ani.SetBool("IsJump", false);
+        }
     }
 }

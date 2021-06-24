@@ -7,6 +7,8 @@ TagManager:
   - Ground
   - Wall
   - DamageZone
+  - Ladder
+  - CheckJump
   layers:
   - Default
   - TransparentFX
