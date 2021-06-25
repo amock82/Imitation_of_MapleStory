@@ -19,6 +19,6 @@ public class MainCamera : MonoBehaviour
 
     void Update()
     {
-        _cameraTf.position = new Vector3(_playerTF.position.x, _playerTF.position.y + 3, -10);
+        _cameraTf.position = new Vector3(_playerTF.position.x, _playerTF.position.y + 2, -10);
     }
 }

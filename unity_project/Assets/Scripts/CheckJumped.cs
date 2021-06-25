@@ -29,19 +29,29 @@ public class CheckJumped : MonoBehaviour
     {
         if (Player.instance.GetIsClimb() == true)
         {
-            Player.instance.setIsGround(false);
+            Player.instance.SetIsGround(false);
         }
-        else if (collision.transform.tag == "Ground")
+        else if (collision.transform.tag == "Ground" || collision.transform.tag == "Terrain")
         {
-            Player.instance.setIsGround(true);
+            Player.instance.SetIsGround(true);
+
+            if (collision.transform.tag == "Terrain")
+            {
+                Player.instance.SetIsTerrain(true);
+            }
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Ground")
+        if (collision.transform.tag == "Ground" || collision.transform.tag == "Terrain")
         {
-            Player.instance.setIsGround(false);
+            Player.instance.SetIsGround(false);
+
+            if (collision.transform.tag == "Terrain")
+            {
+                Player.instance.SetIsTerrain(false);
+            }
         }
     }
 }
