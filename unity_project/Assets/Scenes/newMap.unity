@@ -459,6 +459,24 @@ CircleCollider2D:
   m_Offset: {x: 7.2, y: -10.57}
   serializedVersion: 2
   m_Radius: 0.3
+--- !u!1 &48193085 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1780415906262870292, guid: f5c140c24484dfd4fb8861c2d963b27e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1780415904794215591}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &48193086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 48193085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ff50a2a80562af458bf9c0444cc484a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &67929176
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +580,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2a39f4d6f1c9a3440aafdfdbf83a5666, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 72bdd46eab0e95d4aab11f17258c68eb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1660,17 +1678,24 @@ EdgeCollider2D:
   m_Offset: {x: -13, y: 11.15}
   m_EdgeRadius: 0.01
   m_Points:
-  - {x: -3.345499, y: -0.07725048}
-  - {x: -2.4466715, y: 0.08358002}
-  - {x: -1.6972265, y: 0.003314972}
-  - {x: -1.1763, y: 0.14452457}
-  - {x: -0.29200935, y: 0.1504345}
-  - {x: 0.5385742, y: -0.07851505}
-  - {x: 1.1792707, y: 0.06413078}
-  - {x: 1.8421144, y: 0.07424927}
-  - {x: 2.2666454, y: -0.04658699}
-  - {x: 2.738367, y: 0.029715538}
-  - {x: 3.3310156, y: -0.0144844055}
+  - {x: -3.3470783, y: -0.09935665}
+  - {x: -2.8850546, y: 0.047284126}
+  - {x: -1.949296, y: 0.06305313}
+  - {x: -1.626173, y: -0.023527145}
+  - {x: -1.2110376, y: 0.11768246}
+  - {x: -0.29200935, y: 0.13306618}
+  - {x: 0.532259, y: -0.08167267}
+  - {x: 0.76095486, y: -0.076862335}
+  - {x: 0.9140034, y: -0.0021858215}
+  - {x: 1.2725048, y: 0.03541851}
+  - {x: 1.4742107, y: -0.04291439}
+  - {x: 1.7679024, y: 0.033195496}
+  - {x: 1.9971056, y: -0.0061216354}
+  - {x: 2.0863838, y: -0.06657696}
+  - {x: 2.632967, y: 0.0007829666}
+  - {x: 2.9041595, y: -0.0618639}
+  - {x: 3.097723, y: 0.029795647}
+  - {x: 3.3104887, y: -0.019221306}
 --- !u!70 &528292269
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2368,12 +2393,12 @@ PrefabInstance:
     - target: {fileID: 1492309362122565739, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.32
+      value: -13.78
       objectReference: {fileID: 0}
     - target: {fileID: 1492309362122565739, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.18
+      value: 11.6
       objectReference: {fileID: 0}
     - target: {fileID: 1492309362122565739, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
@@ -2419,16 +2444,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8076632208794937906, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_Size.x
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8076632208794937906, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_Size.y
-      value: 1.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2348c1178808fe49ac8a81365dddc15, type: 3}
@@ -5626,10 +5641,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1780415906262870291, guid: f5c140c24484dfd4fb8861c2d963b27e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1780415906262870292, guid: f5c140c24484dfd4fb8861c2d963b27e,
         type: 3}
       propertyPath: m_Name
       value: MiniMapCamera
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1780415906262870288, guid: f5c140c24484dfd4fb8861c2d963b27e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f5c140c24484dfd4fb8861c2d963b27e, type: 3}

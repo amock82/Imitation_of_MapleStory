@@ -16,16 +16,19 @@ public class Player : MonoBehaviour
 
     Rigidbody2D             _rig;
     BoxCollider2D           _col2D;
-    Animator                _ani;
+    public Animator         _ani;
 
     private bool            isGround = false;
     private bool            isTerrain = false;
     private bool            isHit = false;
     private bool            isclimb = false;
     private bool            isDownJump = false;
+    private bool            isJumped = false;
 
     float                   hitDelay = 1f;
     float                   hitTimer = 0;
+
+    float                   move_Speed;
 
     int                     lv = 1;
 
@@ -51,33 +54,38 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-
+        move_Speed = 0.8f * default_Speed;
     }
 
     void Update()
     {
+        Jump();
+
         if (hitTimer > 0)
         {
             hitTimer -= Time.deltaTime;
         }
-
-        Debug.Log(isclimb);
     }
 
     void FixedUpdate()
     {
         Move();
-        Jump();
     }
 
     private void Move()
     {
         float moveH = Input.GetAxis("Horizontal");
-        float moveV = Input.GetAxis("Vertical");
+        float moveV = Input.GetAxisRaw("Vertical");
 
-        if (isGround == true && isclimb == false)
+        if (isclimb == true)
         {
-            _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed, _rig.velocity.y);
+            _rig.velocity = new Vector2(0, moveV * Time.deltaTime * move_Speed);
+
+            CheckJumped.instance._col2D.enabled = false;
+        }
+        else if (isGround == true)
+        {
+            _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed, _rig.velocity.y);
 
             if (moveH != 0)
             {
@@ -97,16 +105,11 @@ public class Player : MonoBehaviour
                 transform.rotation = new Quaternion(0, 180, 0, 0);
             }
         }
-        else if (isGround == false && isclimb == false)
+        else if (isGround == false)
         {
-            _rig.velocity = new Vector2(moveH * Time.deltaTime * default_Speed * 0.005f + _rig.velocity.x, _rig.velocity.y);
+            _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed * 0.01f  + _rig.velocity.x * 0.99f, _rig.velocity.y);
         }
-        else if (isclimb == true)
-        {
-            _rig.velocity = new Vector2(0, moveV * Time.deltaTime * default_Speed);
-
-            CheckJumped.instance._col2D.enabled = false;
-        }
+        Debug.Log(_rig.velocity.x);
     }
 
     private void Jump()
@@ -122,16 +125,21 @@ public class Player : MonoBehaviour
             }
             else if (isclimb == false)
             {
-                _rig.velocity = new Vector2(_rig.velocity.x, default_JumpForce * 0.04f);
+                StartCoroutine(JumpDelay());
+                //_rig.velocity = new Vector2(_rig.velocity.x, default_JumpForce * 0.04f);
+                
+                /*
+                 * _rig.AddForce(new Vector2(0, default_JumpForce * 0.1f), ForceMode2D.Impulse);
                 _ani.SetBool("IsJump", true);
 
                 isGround = false;
+                */
             }
         }
 
         if (Input.GetButton("Jump") && isclimb == true && moveH != 0)
         {
-            isclimb = false;
+            SetIsClimb(false) ;
 
             _rig.velocity = new Vector2(2 * moveH, default_JumpForce * 0.020f);
         }
@@ -191,6 +199,22 @@ public class Player : MonoBehaviour
 
             isDownJump = false;
             CheckJumped.instance._col2D.enabled = true;
+        }
+    }
+
+    IEnumerator JumpDelay()
+    {
+        if (isJumped == false)
+        {
+            isJumped = true;
+
+            yield return new WaitForSeconds(0.02f);
+
+            _rig.AddForce(new Vector2(0, default_JumpForce * 0.08f), ForceMode2D.Impulse);
+            _ani.SetBool("IsJump", true);
+
+            isGround = false;
+            isJumped = false;
         }
     }
 
@@ -257,6 +281,8 @@ public class Player : MonoBehaviour
         {
             _ani.SetBool("IsJump", false);
         }
+
+        Debug.Log(isGround);
     }
 
     public void SetIsTerrain(bool value)
@@ -267,5 +293,14 @@ public class Player : MonoBehaviour
     public void SetIsClimb(bool value)
     {
         isclimb = value;
+
+        if(value == true)
+        {
+            _rig.gravityScale = 0;
+        }
+        else
+        {
+            _rig.gravityScale = 1;
+        }
     }
 }

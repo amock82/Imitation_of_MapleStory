@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class Ladder : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == "CheckJump")

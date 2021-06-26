@@ -15,17 +15,7 @@ public class CheckJumped : MonoBehaviour
         instance = this;
     }
 
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (Player.instance.GetIsClimb() == true)
         {
@@ -41,6 +31,23 @@ public class CheckJumped : MonoBehaviour
             }
         }
     }
+
+    //private void OnCollisionStay2D(Collision2D collision)
+    //{
+    //    if (Player.instance.GetIsClimb() == true)
+    //    {
+    //        Player.instance.SetIsGround(false);
+    //    }
+    //    else if (collision.transform.tag == "Ground" || collision.transform.tag == "Terrain")
+    //    {
+    //        Player.instance.SetIsGround(true);
+
+    //        if (collision.transform.tag == "Terrain")
+    //        {
+    //            Player.instance.SetIsTerrain(true);
+    //        }
+    //    }
+    //}
 
     private void OnCollisionExit2D(Collision2D collision)
     {
