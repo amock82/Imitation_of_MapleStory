@@ -12,7 +12,7 @@ public class Ladder : MonoBehaviour
 
             if (moveV > 0 || moveV < 0)
             {
-                Player.instance.SetIsClimb(true);
+                Player.instance.SetIsClimbCrt(true);
 
                 Player.instance.transform.position = new Vector2(GetComponent<BoxCollider2D>().offset.x, Player.instance.transform.position.y);
 
@@ -25,7 +25,7 @@ public class Ladder : MonoBehaviour
     {
         if (collision.tag == "CheckJump" && Player.instance.GetIsClimb() == true)
         {
-            Player.instance.SetIsClimb(false);
+            Player.instance.SetIsClimbCrt(false);
 
             Rigidbody2D _rig = Player.instance.GetComponent<Rigidbody2D>();
 
