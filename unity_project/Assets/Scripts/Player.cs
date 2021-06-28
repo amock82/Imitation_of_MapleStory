@@ -11,8 +11,8 @@ public class Player : MonoBehaviour
     [SerializeField] float  default_JumpForce = 100;
     [SerializeField] float  max_JumpForce = 123;
 
-    [SerializeField] float  horForce = 80;
-    [SerializeField] float  verForce = 100;
+    [SerializeField] public float   horForce = 80;
+    [SerializeField] public float   verForce = 100;
 
     Rigidbody2D             _rig;
     BoxCollider2D           _col2D;
@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
 
     float                   hitDelay = 1f;
     float                   hitTimer = 0;
+
+    float                   groundTimer = 0;
 
     float                   move_Speed;
 
@@ -69,6 +71,12 @@ public class Player : MonoBehaviour
         {
             hitTimer -= Time.deltaTime;
         }
+
+        if (isGround)
+            groundTimer = 0;
+        else
+            groundTimer += Time.deltaTime;
+
     }
 
     void FixedUpdate()
@@ -179,29 +187,38 @@ public class Player : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "DamageZone" && hitTimer <= 0)     // 데미지를 입을 때의 작용
-        {
-            isGround = false;            
+        //if (collision.tag == "DamageZone" && hitTimer <= 0)     // 데미지를 입을 때의 작용
+        //{
+        //    isGround = false;            
 
-            if (collision.transform.position.x < transform.position.x)
-            {
-                StartCoroutine(Hitjudgment(1));
-                //_rig.velocity = new Vector2(Time.deltaTime * 100 - _rig.velocity.x * 100, Time.deltaTime * 100 + _rig.velocity.y);
-            }
+        //    if (collision.transform.position.x < transform.position.x)
+        //    {
+        //        StartCoroutine(Hitjudgment(1, verForce, horForce));
+        //        //_rig.velocity = new Vector2(Time.deltaTime * 100 - _rig.velocity.x * 100, Time.deltaTime * 100 + _rig.velocity.y);
+        //    }
 
-            if (collision.transform.position.x > transform.position.x)
-            {
-                //_rig.AddForce(new Vector2(Time.deltaTime * (-horForce) - _rig.velocity.x * 100, Time.deltaTime * verForce), ForceMode2D.Impulse);
-                StartCoroutine(Hitjudgment(-1));
-            }
+        //    if (collision.transform.position.x > transform.position.x)
+        //    {
+        //        //_rig.AddForce(new Vector2(Time.deltaTime * (-horForce) - _rig.velocity.x * 100, Time.deltaTime * verForce), ForceMode2D.Impulse);
+        //        StartCoroutine(Hitjudgment(-1, verForce, horForce));
+        //    }
 
-            hitTimer = hitDelay;
-        }
+        //    hitTimer = hitDelay;
+        //}
     }
 
-    IEnumerator Hitjudgment(int directionX, float verForce = 120, float horForce = 80)
+    public IEnumerator Hitjudgment(int directionX, float verForce = 120, float horForce = 80)
     {
-        _rig.AddForce(new Vector2(0, verForce), ForceMode2D.Force);
+        //_rig.AddForce(new Vector2(0, verForce), ForceMode2D.Force);
+        if (verForce * 0.01f + _rig.velocity.y > 3)
+        {
+            _rig.velocity = new Vector2(_rig.velocity.x, 3);
+
+        }
+        else
+        {
+            _rig.velocity = new Vector2(_rig.velocity.x, verForce * 0.01f + _rig.velocity.y);
+        }
 
         yield return new WaitForSeconds(0.05f);
 
@@ -269,9 +286,19 @@ public class Player : MonoBehaviour
         }
     }
 
+    IEnumerator FallingDelay()
+    {
+        yield return new WaitForSeconds(0.3f);
+
+        if (isGround == false && groundTimer > 0.3f)
+            _ani.SetBool("IsHitFalling", true);
+    }
+
     public void OnDamage(float damage)
     {
         curHp -= damage;
+
+        hitTimer = hitDelay;
 
         if (curHp <= 0)
         {
@@ -331,8 +358,13 @@ public class Player : MonoBehaviour
         if (isGround == true)
         {
             _ani.SetBool("IsJump", false);
+            _ani.SetBool("IsHitFalling", false);
         }
 
+        if(isGround == false && isJumped == false)
+        {
+            StartCoroutine(FallingDelay());
+        }
     }
 
     public void SetIsTerrain(bool value)
