@@ -1405,7 +1405,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -5
   m_Sprite: {fileID: 21300000, guid: 51fd68e01a2705a409410bb240aba786, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2534,30 +2534,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 749112721295806683, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 1.46
-      objectReference: {fileID: 0}
-    - target: {fileID: 1492309362122565733, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: verForce
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 1492309362122565733, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: horForce
-      value: 150
-      objectReference: {fileID: 0}
     - target: {fileID: 1492309362122565734, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 1492309362122565738, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_SortingOrder
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1492309362122565739, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
@@ -2613,16 +2593,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2863420249457219153, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_SortingOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7575934990176035793, guid: b2348c1178808fe49ac8a81365dddc15,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 1.4600006
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b2348c1178808fe49ac8a81365dddc15, type: 3}
@@ -3665,7 +3635,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.63, y: 0.67}
+  m_Size: {x: 0.64, y: 0.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -6188,6 +6158,11 @@ PrefabInstance:
         type: 3}
       propertyPath: orthographic size
       value: 9.793372
+      objectReference: {fileID: 0}
+    - target: {fileID: 1780415906262870290, guid: f5c140c24484dfd4fb8861c2d963b27e,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 1335
       objectReference: {fileID: 0}
     - target: {fileID: 1780415906262870292, guid: f5c140c24484dfd4fb8861c2d963b27e,
         type: 3}

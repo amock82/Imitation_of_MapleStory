@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    float               hp;
+    float               exp;
 
+    float               atk;
+    float               def;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
