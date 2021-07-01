@@ -22,6 +22,7 @@ public class MainCamera : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 메인카메라는 플레이어를 조금 늦게 추적하게 만듬
         Vector3 cameraPos = Player.instance.transform.position + offset;
         Vector3 lerpPos = Vector3.Lerp(_cameraTf.position, cameraPos, followSpeed);
 

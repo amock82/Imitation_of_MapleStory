@@ -15,9 +15,9 @@ public class CheckJumped : MonoBehaviour
         instance = this;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)  // 플레이어의 바닥충돌체의 조건에 따른 ON/OFF
     {
-        if (Player.instance.GetIsClimb() == true)
+        if (Player.instance.GetIsClimb() == true)       
         {
             Player.instance.SetIsGround(false);
         }

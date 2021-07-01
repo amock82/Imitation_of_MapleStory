@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour, IDropHandler
 {
     Slider _expBar;
     Text _expText;
@@ -43,6 +44,12 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         UIUpdate();
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        Debug.Log("Drop");
+        // throw new System.NotImplementedException();
     }
 
     void UIUpdate()

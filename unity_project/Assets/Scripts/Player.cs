@@ -5,49 +5,50 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float  default_Speed = 100;
-    [SerializeField] float  max_Speed = 140;
+    [SerializeField] float  default_Speed = 100;        // 기본 속도
+    [SerializeField] float  max_Speed = 140;            // 최대 속도
 
-    [SerializeField] float  default_JumpForce = 100;
-    [SerializeField] float  max_JumpForce = 123;
+    [SerializeField] float  default_JumpForce = 100;    // 기본 점프력
+    [SerializeField] float  max_JumpForce = 123;        // 최대 점프력
 
-    [SerializeField] public float   horForce = 80;
-    [SerializeField] public float   verForce = 100;
+    [SerializeField] public float   horForce = 80;      // 피격시 받는 위치변환정보
+    [SerializeField] public float   verForce = 100;     // 피격시 받는 위치변환정보
 
-    Rigidbody2D             _rig;
-    BoxCollider2D           _col2D;
-    public Animator         _ani;
+    Rigidbody2D             _rig;                       // 플레이어 리지드바디
+    BoxCollider2D           _col2D;                     // 플레이어의 피격판정 충돌체
+    public Animator         _ani;                       // 플레이어 애니매이터
 
-    private bool            isGround = false;
-    private bool            isTerrain = false;
-    private bool            isHit = false;
-    private bool            isClimb = false;
-    private bool            isClimbCheck = false;
-    private bool            isClimbJumped = false;
-    private bool            isDownJump = false;
-    private bool            isJumped = false;
-    private bool            isWall = false;
-    private bool            isWallRight = false;
+    private bool            isGround = false;           // 플래이어가 땅 위에있는가
+    private bool            isTerrain = false;          // 플래이어가 지형 위에있는가
+    private bool            isHit = false;              // 플레이어가 피격중인가
+    private bool            isClimb = false;            // 플레이어가 사다리와 상호작용중인가
+    private bool            isClimbCheck = false;       // 코루틴용 제어 플래그
+    private bool            isClimbJumped = false;      // 사다리 이용중 점프시 0.3초간 True가 됨. 조건문용
+    private bool            isDownJump = false;         // 플레이어가 하향점프중인가
+    private bool            isJumped = false;           // 플레이어가 점프중인가
+    private bool            isWall = false;             // 점프시 충돌체가 false되는 문제로 추가한 이동방지 플래그
+    private bool            isWallRight = false;        // 인접한 벽이 플레이어의 오른쪽에 있는가
 
-    float                   hitDelay = 1f;
-    float                   hitTimer = 0;
+    float                   hitDelay = 1f;              // 피격시 무적시간
+    float                   hitTimer = 0;               // 피격시 hitDelay로 설정됨 0이하가 되면 피격 가능
 
-    float                   groundTimer = 0;
+    float                   groundTimer = 0;            // 땅과 떨어져 있는 시간(사다리 이용과 애니매이션 문제로 추가)
+    float                   climbTimer = 0;             // 사다리 상호작용 지속시간
 
-    float                   move_Speed;
+    float                   move_Speed;                 // 이동속도. 플레이어 속도에 가공을 하여 완성됨
 
-    int                     lv = 1;
+    int                     lv = 1;                     // 레벨
 
-    int                     exp = 0;
-    int[]                   maxExp = new int[9] { 15, 34, 57, 92, 135, 372, 560, 840, 1242};
+    int                     exp = 0;                    // 경험치
+    int[]                   maxExp = new int[9] { 15, 34, 57, 92, 135, 372, 560, 840, 1242};// 10레벨까지의 경험치
 
-    float                   maxHp = 50;
-    float                   curHp = 50;
+    float                   maxHp = 50;                 // 최대체력
+    float                   curHp = 50;                 // 현재체력
 
-    float                   maxMp = 50;
-    float                   curMp = 50;
+    float                   maxMp = 50;                 // 최대마나
+    float                   curMp = 50;                 // 현재마나
 
-    public static Player instance;
+    public static Player instance;                      // 싱글톤 기법
 
     private void Awake()
     {
@@ -66,7 +67,9 @@ public class Player : MonoBehaviour
     void Update()
     {
         Jump();
+        ChangeAni();
 
+        //타이머 제어
         if (hitTimer > 0)
         {
             hitTimer -= Time.deltaTime;
@@ -77,6 +80,16 @@ public class Player : MonoBehaviour
         else
             groundTimer += Time.deltaTime;
 
+        if (isClimb == true)
+        {
+            climbTimer += Time.deltaTime;
+        }
+        else
+        {
+            climbTimer = 0;
+            _ani.speed = 1;
+        }
+
     }
 
     void FixedUpdate()
@@ -84,16 +97,27 @@ public class Player : MonoBehaviour
         Move();
     }
 
-    private void Move()
+    private void Move()     // 이동함수
     {
-        float moveH = Input.GetAxis("Horizontal");
-        float moveV = Input.GetAxisRaw("Vertical");
+        float moveH = Input.GetAxis("Horizontal");      // 좌우 방향키 입력값
+        float moveV = Input.GetAxisRaw("Vertical");     // 상하 방향키 입력값 (-1, 0, 1)
 
         if (isClimb == true)
-        {
+        {  
             _rig.velocity = new Vector2(0, moveV * Time.deltaTime * move_Speed);
 
-            CheckJumped.instance._col2D.enabled = false;
+
+            if (climbTimer > 0.3f)
+            {
+                climbTimer = 0;
+
+                if (moveV == 0)
+                {
+                    _ani.speed = 0;
+                }
+                else
+                    _ani.speed = 1;
+            }
         }
         else
         {
@@ -119,13 +143,13 @@ public class Player : MonoBehaviour
                     _ani.SetBool("IsMove", false);
                 }
             }
-            else
+            else    // 플레이어가 공중에 있는 경우, 방향키 입력으로 아주 미세하게 방향을 틀 수 있음
             {
                 _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed * 0.01f + _rig.velocity.x * 0.99f, _rig.velocity.y);
             }
         }
 
-        if (isWall == true)
+        if (isWall == true)     // 벽과 인접한 경우, 이동 제한
         {
             if (isWallRight == true)
             {
@@ -141,11 +165,12 @@ public class Player : MonoBehaviour
 
     }
 
-    private void Jump()
+    private void Jump()     // 점프 함수
     {
-        float moveH = Input.GetAxisRaw("Horizontal");
-        float moveV = Input.GetAxisRaw("Vertical");
+        float moveH = Input.GetAxisRaw("Horizontal");       // 좌우 방향키 입력값 (-1, 0, 1)
+        float moveV = Input.GetAxisRaw("Vertical");         // 상하 방향키 입력값 (-1, 0, 1)
 
+        // 일반적인 점프/하향점프
         if (Input.GetButton("Jump") && isGround == true && isClimb == false && isClimbJumped == false)
         {
             if (moveV < 0 && isTerrain == true)
@@ -155,14 +180,6 @@ public class Player : MonoBehaviour
             else if (isClimb == false)
             {
                 StartCoroutine(JumpDelay());
-                //_rig.velocity = new Vector2(_rig.velocity.x, default_JumpForce * 0.04f);
-                
-                /*
-                 * _rig.AddForce(new Vector2(0, default_JumpForce * 0.1f), ForceMode2D.Impulse);
-                _ani.SetBool("IsJump", true);
-
-                isGround = false;
-                */
             }
         }
 
@@ -185,7 +202,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    void ChangeAni()    // 추후 애니매이션 변경 코드를 모두 옮겨놓을 것
+    {
+        if(isClimb == true)
+        {
+            _ani.SetBool("IsClimb", true);
+        }
+        else
+        {
+            _ani.SetBool("IsClimb", false);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)      // 데미지를 주는 작용은 적 객체의 기능으로 옮김
     {
         //if (collision.tag == "DamageZone" && hitTimer <= 0)     // 데미지를 입을 때의 작용
         //{
@@ -273,6 +302,7 @@ public class Player : MonoBehaviour
         if (value == false)
         {
             yield return new WaitForSeconds(0.02f);
+            CheckJumped.instance._col2D.enabled = false;          
             isClimb = value;
         }
         else if (isClimbCheck == false)
@@ -280,6 +310,7 @@ public class Player : MonoBehaviour
             isClimbCheck = true;
 
             yield return new WaitForSeconds(0.02f);
+            CheckJumped.instance._col2D.enabled = false;
             isClimb = value;
 
             isClimbCheck = false;
@@ -351,6 +382,16 @@ public class Player : MonoBehaviour
         return isClimb;
     }
 
+    public bool GetIsGround()
+    {
+        return isGround;
+    }
+
+    public float GetGroundTimer()
+    {
+        return groundTimer;
+    }
+
     public void SetIsGround(bool value)
     {
         isGround = value;
@@ -378,8 +419,8 @@ public class Player : MonoBehaviour
 
         if (value == true)
         {
+            CheckJumped.instance._col2D.enabled = false;
             _rig.gravityScale = 0;
-
         }
         else
         {
@@ -387,7 +428,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetIsClimbCrt(bool value)
+    public void SetIsClimbCrt(bool value)   
     {
         if (value == true)
         {

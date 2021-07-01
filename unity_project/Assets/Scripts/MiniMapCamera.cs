@@ -26,6 +26,7 @@ public class MiniMapCamera : MonoBehaviour
 
     void Update()
     {
+        // 미니맵카메라의 위치는 플레이어의 위치를 기반으로 추적
         _cameraTf.position = new Vector3(_playerTF.position.x, _playerTF.position.y, -10);
 
 
