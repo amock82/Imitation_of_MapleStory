@@ -10,9 +10,6 @@ public class MiniMapUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     float upStd;            // 위쪽 기준점
     float leftStd;          // 왼쪽 기준점
 
-    Vector2 upStdVec;
-    Vector2 LeStdVec;
-
     Vector2 originalVec;
 
     private void Awake()
@@ -21,24 +18,15 @@ public class MiniMapUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
         leftStd = transform.position.x;
 
         originalVec = transform.position;
-
-        Debug.Log(upStd);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("Start");
-
         dragPoint = eventData.position;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        upStdVec = new Vector2(transform.position.x, upStd);
-        LeStdVec = new Vector2(leftStd, transform.position.y);
-
-
-
         if (eventData.position.y <= upStd + GetComponent<RectTransform>().rect.height / 2)
         {
             originalVec += (eventData.position - dragPoint);
@@ -56,6 +44,6 @@ public class MiniMapUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("EndDrag");
+
     }
 }
