@@ -33,6 +33,8 @@ public class Enemy : MonoBehaviour
     float                   atk;
     float                   def;
 
+    public GameObject       lootItem;
+
     [SerializeField]State   state = State.Idle;
 
     private void Awake()
@@ -52,6 +54,8 @@ public class Enemy : MonoBehaviour
         Timer();
         StateChange();
         AniChange(state);
+
+
     }
 
     private void FixedUpdate()
@@ -69,7 +73,7 @@ public class Enemy : MonoBehaviour
         if (changeDirTimer >= 0)
         {
             changeDirTimer -= Time.deltaTime;
-        }
+        }         
     }
 
     void Move()         // 이동함수

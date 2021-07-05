@@ -20,6 +20,6 @@ public class Item : ScriptableObject
     public Sprite       itemImage;          // 아이템 이미지
     public GameObject   itemPrefab;         // 아이템 객체
 
-    public float        itemAmount;         // 아이템 갯수
-    public float        itemMaxAmount;      // 아이템 최대 갯수
+    public int          itemAmount;         // 아이템 갯수
+    public int          itemMaxAmount;      // 아이템 최대 갯수
 }
