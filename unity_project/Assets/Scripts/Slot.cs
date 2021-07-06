@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     public Item     item;
     public int      itemCount;
@@ -38,11 +39,21 @@ public class Slot : MonoBehaviour
         itemCount = itemGet.itemAmount;
         itemImage.sprite = item.itemImage;
 
-        _text.text = itemCount.ToString();
+        if (itemGet.itemName != "Empty")
+        {
+            _text.text = itemCount.ToString();
+        }
+        else
+        {
+            _text.text = "";
+        }
 
         itemImage.SetNativeSize();
 
         itemImage.gameObject.SetActive(true);
+
+
+
     }
 
     public void AddItem(int amount)
@@ -52,12 +63,55 @@ public class Slot : MonoBehaviour
 
     public void PullItem()
     {
-        item = null;
+        item = Inventory.instance.emptyItem;
         itemCount = 0;
-        itemImage.sprite = null;
+        itemImage.sprite = item.itemImage;
 
         _text.text = "";
 
         itemImage.gameObject.SetActive(false);
+    }
+
+
+    public void OnBeginDrag(PointerEventData eventData)
+    { 
+        if (item != null)
+        {
+            if (item.itemName != "Empty")
+            {
+                SlotDrag.instance.slotDrag = this;
+                SlotDrag.instance.SetImage(itemImage);
+                SlotDrag.instance.transform.position = eventData.position;
+            }
+        }
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (item != null)
+        {
+            if (item.itemName != "Empty")
+                SlotDrag.instance.transform.position = eventData.position;
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (item != null)
+        {
+            SlotDrag.instance.SetColor(0);
+            SlotDrag.instance.slotDrag = null;
+        }
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        if (item != null && SlotDrag.instance.slotDrag!= null)
+        {
+            Item tempItem = item;
+
+            item.ChangeItem(SlotDrag.instance.slotDrag.item);
+            SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
+        }
     }
 }

@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour, IDropHandler
 
     Player _player = Player.instance;
 
+    public GameObject _itemPrefep;
+
     private void Awake()
     {
         _expBar = GameObject.Find("ExpUI").GetComponent<Slider>();
@@ -46,12 +48,6 @@ public class UIManager : MonoBehaviour, IDropHandler
         UIUpdate();
     }
 
-    public void OnDrop(PointerEventData eventData)
-    {
-        Debug.Log("Drop");
-        // throw new System.NotImplementedException();
-    }
-
     void UIUpdate()
     {
         _expBar.value = (float)Player.instance.GetExp() / Player.instance.GetMaxExp(Player.instance.GetLv() - 1);
@@ -64,5 +60,18 @@ public class UIManager : MonoBehaviour, IDropHandler
         _mpText.text = (float)Player.instance.GetMp() + "/" + Player.instance.GetMaxMp();
 
         _lvText.text = "lv. " + Player.instance.GetLv();
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        Debug.Log(1);
+
+        if (SlotDrag.instance.slotDrag != null)
+        {
+            _itemPrefep.GetComponent<ItemPickUp>().item.ChangeItem(SlotDrag.instance.slotDrag.item);
+            Player.Instantiate(_itemPrefep);
+
+            SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
+        }
     }
 }

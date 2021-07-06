@@ -10,5 +10,4 @@ public class InventoryViewer : MonoBehaviour
     {
         _slot = GetComponentsInChildren<Slot>();
     }
-
 }

@@ -7,13 +7,11 @@ public class Inventory : MonoBehaviour
 {
     public static Inventory instance;
     public Slot[]           _slot;
-    public Item[]           emptyItem = new Item[6];
+    public Item             emptyItem;
     
     Toggle[]                invenTap;
 
     public List<List<Item>> item = null;
-
-
 
     public int              tap = 0;
     
@@ -31,8 +29,13 @@ public class Inventory : MonoBehaviour
         item.Add(new List<Item>());
         item.Add(new List<Item>());
 
-        _slot = GetComponentsInChildren<Slot>();
+        _slot = GameObject.Find("GridGroup").GetComponentsInChildren<Slot>();
 
+        for(int i = 0; i <6; i++)
+        {
+            for (int j = 0; j < 32; j++)
+                item[i].Add(Instantiate(emptyItem));
+        }
     }
 
     public void addItem(Item itemGet)
@@ -71,17 +74,20 @@ public class Inventory : MonoBehaviour
 
         Item comp = item[typeIndex].Find(x =>x.itemName == itemGet.itemName);
 
-        Debug.Log(comp);
+        //Debug.Log(comp);
 
         if (comp == null)
         {
-            item[typeIndex].Add(itemGet);
+            Item temp = item[typeIndex].Find(x => x.itemName == emptyItem.itemName);
+
+            temp.ChangeItem(itemGet);
+            //temp = itemGet;
         }
         else if (comp.itemName == itemGet.itemName)
         {
             comp.itemAmount += itemGet.itemAmount;
 
-            Debug.Log(comp.itemAmount);
+            //Debug.Log(comp.itemAmount);
         }
         
         //Debug.Log(item[typeIndex][0]);
@@ -102,9 +108,11 @@ public class Inventory : MonoBehaviour
         {
             _slot[i].PutItem(item[tap][i]);
         }
-        for (int i = item[tap].Count; i < _slot.Length; i++)
-        {
-            _slot[i].PullItem();
-        }
+        //for (int i = item[tap].Count; i < _slot.Length; i++)
+        //{
+        //    _slot[i].PullItem();
+        //}
+
+        //Debug.Log(item[2][0].itemAmount);
     }
 }

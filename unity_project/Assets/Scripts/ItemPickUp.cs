@@ -8,6 +8,8 @@ public class ItemPickUp : MonoBehaviour
 {
     public Item         item;
 
+    SpriteRenderer      _spriteRenderer; 
+
     Rigidbody2D         _rig;
     BoxCollider2D       _col;
 
@@ -18,11 +20,15 @@ public class ItemPickUp : MonoBehaviour
 
     private void Awake()
     {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+
         _rig = GetComponent<Rigidbody2D>();
         _col = GetComponent<BoxCollider2D>();
 
         //_rig.velocity = new Vector2(_rig.velocity.x, 5);
         _rig.AddForce(Vector2.up * 250, ForceMode2D.Force);
+
+        _spriteRenderer.sprite = item.itemImage;
     }
 
     private void Update()
