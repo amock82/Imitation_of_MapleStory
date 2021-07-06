@@ -11,6 +11,8 @@ public class SlotDrag : MonoBehaviour
 
     public Image _image;
 
+    bool isTrackingMouse = false;
+
     private void Awake()
     {
         instance = this;
@@ -29,5 +31,15 @@ public class SlotDrag : MonoBehaviour
         color.a = alpha;
 
         _image.color = color;
+    }
+
+    public bool GetIsTrackingMouse()
+    {
+        return isTrackingMouse;
+    }
+
+    public void SetIsTrackingMouse(bool value)
+    {
+        isTrackingMouse = value;
     }
 }

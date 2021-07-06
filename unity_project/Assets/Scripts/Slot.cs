@@ -82,6 +82,8 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
                 SlotDrag.instance.slotDrag = this;
                 SlotDrag.instance.SetImage(itemImage);
                 SlotDrag.instance.transform.position = eventData.position;
+
+                SlotDrag.instance.SetIsTrackingMouse(true);
             }
         }
     }
@@ -100,17 +102,18 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         if (item != null)
         {
             SlotDrag.instance.SetColor(0);
-            SlotDrag.instance.slotDrag = null;
+            //SlotDrag.instance.slotDrag = null;
         }
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (item != null && SlotDrag.instance.slotDrag!= null)
+        if (item != null && SlotDrag.instance.slotDrag!= null && item != SlotDrag.instance.slotDrag.item)
         {
             Item tempItem = item;
 
             item.ChangeItem(SlotDrag.instance.slotDrag.item);
+
             SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
         }
     }

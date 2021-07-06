@@ -21,8 +21,6 @@ public class UIManager : MonoBehaviour, IDropHandler
 
     Player _player = Player.instance;
 
-    public GameObject _itemPrefep;
-
     private void Awake()
     {
         _expBar = GameObject.Find("ExpUI").GetComponent<Slider>();
@@ -64,14 +62,12 @@ public class UIManager : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log(1);
-
-        if (SlotDrag.instance.slotDrag != null)
+        if (eventData.pointerEnter.tag == "DropZone")
         {
-            _itemPrefep.GetComponent<ItemPickUp>().item.ChangeItem(SlotDrag.instance.slotDrag.item);
-            Player.Instantiate(_itemPrefep);
-
-            SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
+            if (SlotDrag.instance.slotDrag != null)
+            {
+                DropInput.instance.Call();
+            }
         }
     }
 }

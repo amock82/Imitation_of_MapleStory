@@ -38,7 +38,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void addItem(Item itemGet)
+    public void addItem(Item itemGet, int count)
     {
         int typeIndex = 0;
 
@@ -81,11 +81,12 @@ public class Inventory : MonoBehaviour
             Item temp = item[typeIndex].Find(x => x.itemName == emptyItem.itemName);
 
             temp.ChangeItem(itemGet);
+            temp.itemAmount = count;
             //temp = itemGet;
         }
         else if (comp.itemName == itemGet.itemName)
         {
-            comp.itemAmount += itemGet.itemAmount;
+            comp.itemAmount += count;
 
             //Debug.Log(comp.itemAmount);
         }

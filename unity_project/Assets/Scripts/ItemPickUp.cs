@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using UnityEngine;
 
 public class ItemPickUp : MonoBehaviour
@@ -17,6 +18,8 @@ public class ItemPickUp : MonoBehaviour
 
     bool                isUp = true;
     bool                isLoot = false;
+
+    int                 count = 1;
 
     private void Awake()
     {
@@ -61,6 +64,15 @@ public class ItemPickUp : MonoBehaviour
                 }
             }
         }
+
+        if (_rig.velocity.y > 0)
+        {
+            _col.enabled = false;
+        }
+        else
+        {
+            _col.enabled = true;
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -71,7 +83,7 @@ public class ItemPickUp : MonoBehaviour
             {
                 isLoot = true;
 
-                Inventory.instance.addItem(Instantiate(item));
+                Inventory.instance.addItem(Instantiate(item), count);
 
                 _target = collision.transform; 
 
@@ -80,5 +92,15 @@ public class ItemPickUp : MonoBehaviour
                 Destroy(gameObject, 0.5f);
             }
         }
+    }
+
+    public int GetCount()
+    {
+        return count;
+    }
+
+    public void SetCount(int value)
+    {
+        count = value;
     }
 }
