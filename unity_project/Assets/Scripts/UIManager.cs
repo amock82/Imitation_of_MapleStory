@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class UIManager : MonoBehaviour, IDropHandler
+public class UIManager : MonoBehaviour, IPointerClickHandler
 {
     Slider _expBar;
     Text _expText;
@@ -60,13 +60,15 @@ public class UIManager : MonoBehaviour, IDropHandler
         _lvText.text = "lv. " + Player.instance.GetLv();
     }
 
-    public void OnDrop(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.pointerEnter.tag == "DropZone")
+        if (eventData.pointerEnter.tag == "DropZone" && SlotDrag.instance.GetIsTrackingMouse() == true)
         {
             if (SlotDrag.instance.slotDrag != null)
             {
                 DropInput.instance.Call();
+
+                SlotDrag.instance.SetIsTrackingMouse(false);
             }
         }
     }

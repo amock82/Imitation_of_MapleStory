@@ -8,18 +8,20 @@ using UnityEngine;
 public class ItemPickUp : MonoBehaviour
 {
     public Item         item;
+    public Meso         meso;
 
     SpriteRenderer      _spriteRenderer; 
 
     Rigidbody2D         _rig;
     BoxCollider2D       _col;
 
-    Transform           _target = null;
+    Transform           _target = null;         // 플레이어의 위치
 
-    bool                isUp = true;
-    bool                isLoot = false;
+    bool                isUp = true;            // 땅에 떨어진 아이템의 상하운동 상태
+    bool                isLoot = false;         // 주워진 아이템은 True
 
     int                 count = 1;
+    int                 mesoAmount = 10;
 
     private void Awake()
     {
@@ -31,7 +33,14 @@ public class ItemPickUp : MonoBehaviour
         //_rig.velocity = new Vector2(_rig.velocity.x, 5);
         _rig.AddForce(Vector2.up * 250, ForceMode2D.Force);
 
-        _spriteRenderer.sprite = item.itemImage;
+        if (item != null)
+        {
+            _spriteRenderer.sprite = item.itemImage;
+        }
+        else
+        {
+            _spriteRenderer.sprite = meso.mesoImage;
+        }
     }
 
     private void Update()
@@ -47,7 +56,7 @@ public class ItemPickUp : MonoBehaviour
         {
             if (isUp == true)
             {
-                _col.size += Vector2.up * 0.002f;
+                _col.size += Vector2.up * 0.004f;
 
                 if(_col.size.y > 0.46f)
                 {
@@ -56,7 +65,7 @@ public class ItemPickUp : MonoBehaviour
             }
             if (isUp == false)
             {
-                _col.size -= Vector2.up * 0.002f;
+                _col.size -= Vector2.up * 0.003f;
 
                 if (_col.size.y < 0.26f)
                 {
@@ -81,15 +90,27 @@ public class ItemPickUp : MonoBehaviour
         {
             if (Input.GetButton("PickUp") && isLoot == false)
             {
-                isLoot = true;
+                if (InputManager.instance.GetIsPickable())
+                {
+                    InputManager.instance.SetIsPickable(false);
 
-                Inventory.instance.addItem(Instantiate(item), count);
+                    isLoot = true;
 
-                _target = collision.transform; 
+                    if (item != null)
+                    {
+                        Inventory.instance.addItem(Instantiate(item), count);
+                    }
+                    else
+                    {
+                        Inventory.instance.SetAddMeso(mesoAmount);
+                    }
 
-                _rig.gravityScale = 0;
+                    _target = collision.transform;
 
-                Destroy(gameObject, 0.5f);
+                    _rig.gravityScale = 0;
+
+                    Destroy(gameObject, 0.5f);
+                }
             }
         }
     }
@@ -99,8 +120,18 @@ public class ItemPickUp : MonoBehaviour
         return count;
     }
 
+    public int GetMesoAmount()
+    {
+        return mesoAmount;
+    }
+
     public void SetCount(int value)
     {
         count = value;
+    }
+
+    public void SetMesoAmount(int value)
+    {
+        mesoAmount = value;
     }
 }

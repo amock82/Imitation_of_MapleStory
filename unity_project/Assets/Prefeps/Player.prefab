@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 1492309362886944124}
   - component: {fileID: 1492309362886944098}
   - component: {fileID: 4762257720388012157}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CheckJump
   m_TagString: CheckJump
   m_Icon: {fileID: 0}

@@ -18,6 +18,16 @@ public class SlotDrag : MonoBehaviour
         instance = this;
     }
 
+    private void Update()
+    {
+        if (isTrackingMouse == true)
+        {
+            transform.position = Input.mousePosition;
+
+            Debug.Log(2);
+        }
+    }
+
     public void SetImage(Image _itemDrag)
     {
         _image.sprite = _itemDrag.sprite;
@@ -41,5 +51,14 @@ public class SlotDrag : MonoBehaviour
     public void SetIsTrackingMouse(bool value)
     {
         isTrackingMouse = value;
+
+        if(value == true)
+        {
+            SetColor(0.5f);
+        }
+        else
+        {
+            SetColor(0);
+        }
     }
 }

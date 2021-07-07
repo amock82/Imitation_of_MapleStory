@@ -9,18 +9,21 @@ public class Inventory : MonoBehaviour
     public Slot[]           _slot;
     public Item             emptyItem;
     
-    Toggle[]                invenTap;
+    Toggle[]                _invenTap;
+    Text                    _mesoText;
 
     public List<List<Item>> item = null;
 
     public int              tap = 0;
+    private int              meso = 1000;
     
     private void Awake()
     {
         instance = this;
 
         item = new List<List<Item>>();
-        invenTap = GetComponentsInChildren<Toggle>();
+        _invenTap = GetComponentsInChildren<Toggle>();
+        _mesoText = GameObject.Find("MesoText").GetComponent<Text>();
 
         item.Add(new List<Item>());
         item.Add(new List<Item>());
@@ -94,11 +97,21 @@ public class Inventory : MonoBehaviour
         //Debug.Log(item[typeIndex][0]);
     }
 
+    public int GetMeso()
+    {
+        return meso;
+    }
+
+    public void SetAddMeso(int add)
+    {
+        meso += add;
+    }
+
     private void Update()
     {
         for (int i = 0; i < 6; i++)
         {
-            if(invenTap[i].isOn == true)
+            if(_invenTap[i].isOn == true)
             {
                 tap = i;
                 break;
@@ -109,6 +122,8 @@ public class Inventory : MonoBehaviour
         {
             _slot[i].PutItem(item[tap][i]);
         }
+
+        _mesoText.text = meso.ToString("N0");
         //for (int i = item[tap].Count; i < _slot.Length; i++)
         //{
         //    _slot[i].PullItem();

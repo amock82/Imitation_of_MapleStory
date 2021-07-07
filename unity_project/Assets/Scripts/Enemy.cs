@@ -207,7 +207,7 @@ public class Enemy : MonoBehaviour
 
                 //hitTimer = hitDelay;
 
-                instance.OnDamage(10);
+                instance.OnDamage(5);
             }
         }
     }
