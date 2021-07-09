@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,9 +15,11 @@ public class Player : MonoBehaviour
     [SerializeField] public float   horForce = 80;      // 피격시 받는 위치변환정보
     [SerializeField] public float   verForce = 100;     // 피격시 받는 위치변환정보
 
-    Rigidbody2D             _rig;                       // 플레이어 리지드바디
-    BoxCollider2D           _col2D;                     // 플레이어의 피격판정 충돌체
-    public Animator         _ani;                       // 플레이어 애니매이터
+    Rigidbody2D                 _rig;                       // 플레이어 리지드바디
+    BoxCollider2D               _col2D;                     // 플레이어의 피격판정 충돌체
+    public Animator             _ani;                       // 플레이어 애니매이터
+    GameObject                  _atkZone;                   // 공격판정 범위 오브젝트
+    public GameObject           _grave;                     // 비석 오브젝트 (사망시 만들어냄)
 
     private bool            isGround = false;           // 플래이어가 땅 위에있는가
     private bool            isTerrain = false;          // 플래이어가 지형 위에있는가
@@ -28,6 +31,8 @@ public class Player : MonoBehaviour
     private bool            isJumped = false;           // 플레이어가 점프중인가
     private bool            isWall = false;             // 점프시 충돌체가 false되는 문제로 추가한 이동방지 플래그
     private bool            isWallRight = false;        // 인접한 벽이 플레이어의 오른쪽에 있는가
+    private bool            isAttack = false;           // 공격중인가
+    private bool            isDie = false;              // 사망했는가
 
     float                   hitDelay = 1f;              // 피격시 무적시간
     float                   hitTimer = 0;               // 피격시 hitDelay로 설정됨 0이하가 되면 피격 가능
@@ -56,6 +61,9 @@ public class Player : MonoBehaviour
         _col2D = GetComponent<BoxCollider2D>();
         _ani = GetComponent<Animator>();
 
+        _atkZone = GameObject.Find("AttackZone");
+        _atkZone.SetActive(false);
+
         instance = this;
     }
 
@@ -66,9 +74,24 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Jump();
-        ChangeAni();
+        if (isDie == false)
+        {
+            Timer();
+            Jump();
+            ChangeAni();        
+        }
+    }
 
+    void FixedUpdate()
+    {
+        if (isDie == false)
+        {
+            Move();
+        }
+    }
+
+    private void Timer()
+    {
         //타이머 제어
         if (hitTimer > 0)
         {
@@ -89,12 +112,6 @@ public class Player : MonoBehaviour
             climbTimer = 0;
             _ani.speed = 1;
         }
-
-    }
-
-    void FixedUpdate()
-    {
-        Move();
     }
 
     private void Move()     // 이동함수
@@ -103,7 +120,7 @@ public class Player : MonoBehaviour
         float moveV = Input.GetAxisRaw("Vertical");     // 상하 방향키 입력값 (-1, 0, 1)
 
         if (isClimb == true)
-        {  
+        {
             _rig.velocity = new Vector2(0, moveV * Time.deltaTime * move_Speed);
 
 
@@ -121,6 +138,11 @@ public class Player : MonoBehaviour
         }
         else
         {
+            if (isAttack == true)
+            {
+                moveH = 0;
+            }
+
             if (moveH > 0)
             {
                 transform.rotation = new Quaternion(0, 0, 0, 0);
@@ -147,6 +169,7 @@ public class Player : MonoBehaviour
             {
                 _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed * 0.01f + _rig.velocity.x * 0.99f, _rig.velocity.y);
             }
+
         }
 
         if (isWall == true)     // 벽과 인접한 경우, 이동 제한
@@ -170,25 +193,28 @@ public class Player : MonoBehaviour
         float moveH = Input.GetAxisRaw("Horizontal");       // 좌우 방향키 입력값 (-1, 0, 1)
         float moveV = Input.GetAxisRaw("Vertical");         // 상하 방향키 입력값 (-1, 0, 1)
 
-        // 일반적인 점프/하향점프
-        if (Input.GetButton("Jump") && isGround == true && isClimb == false && isClimbJumped == false)
+        if (isAttack == false)  // 공격중엔 점프 방지
         {
-            if (moveV < 0 && isTerrain == true)
+            // 일반적인 점프/하향점프
+            if (Input.GetButton("Jump") && isGround == true && isClimb == false && isClimbJumped == false)
             {
-                StartCoroutine(DownJump());
+                if (moveV < 0 && isTerrain == true)
+                {
+                    StartCoroutine(DownJump());
+                }
+                else if (isClimb == false)
+                {
+                    StartCoroutine(JumpDelay());
+                }
             }
-            else if (isClimb == false)
+
+            if (Input.GetButtonDown("Jump") && isClimb == true && moveH != 0)
             {
-                StartCoroutine(JumpDelay());
+                SetIsClimb(false);
+                StartCoroutine(JumpClimb());
+
+                _rig.velocity = new Vector2(2 * moveH, default_JumpForce * 0.020f);
             }
-        }
-
-        if (Input.GetButtonDown("Jump") && isClimb == true && moveH != 0)
-        {
-            SetIsClimb(false);
-            StartCoroutine(JumpClimb());
-
-            _rig.velocity = new Vector2(2 * moveH, default_JumpForce * 0.020f);
         }
 
         // 점프중에 바닥의 콜라이더에 막히는것을 방지
@@ -212,6 +238,15 @@ public class Player : MonoBehaviour
         {
             _ani.SetBool("IsClimb", false);
         }
+    }
+
+    public void EndAttack()
+    {
+        Player.instance._ani.SetBool("IsAttack", false);
+
+        isAttack = false;
+
+        _atkZone.SetActive(false);
     }
 
     private void OnTriggerStay2D(Collider2D collision)      // 데미지를 주는 작용은 적 객체의 기능으로 옮김
@@ -334,7 +369,51 @@ public class Player : MonoBehaviour
         if (curHp <= 0)
         {
             curHp = 0;
+
+            Die();
         }
+    }
+
+    public void OnAtkZone()
+    {
+        _atkZone.SetActive(true);
+    }
+
+    public void AddExp(int getExp)
+    {
+        exp += getExp;
+
+        for(; exp > maxExp[lv - 1]; )
+        {
+            exp -= maxExp[lv - 1];
+
+            LevelUP();
+            UIManager.instance.OnLevelUpUI();
+        }
+    }
+
+    public void LevelUP()
+    {
+        lv++;
+
+        maxHp += 10;        // 추후 수정
+        maxMp += 10;        // 추후 수정
+
+        curHp = maxHp;
+        curMp = maxMp;
+    }
+
+    public void Die()
+    {
+        GameObject grave = Instantiate(_grave);
+
+        grave.transform.position = transform.position + Vector3.up * 5;
+        grave.GetComponent<Grave>().startPos = grave.transform.position;
+
+        isDie = true;
+        _ani.SetBool("IsDie", true);
+
+        _col2D.enabled = false;
     }
 
     public int GetLv()
@@ -390,6 +469,16 @@ public class Player : MonoBehaviour
     public float GetGroundTimer()
     {
         return groundTimer;
+    }
+
+    public bool GetIsAttack()
+    {
+        return isAttack;
+    }
+
+    public GameObject GetAtkZone()
+    {
+        return _atkZone;
     }
 
     public void SetIsGround(bool value)
@@ -449,5 +538,10 @@ public class Player : MonoBehaviour
         isWall = value;
 
         isWallRight = value2;
+    }
+
+    public void SetIsAttack(bool value)
+    {
+        isAttack = value;
     }
 }

@@ -39,6 +39,16 @@ public class InputManager : MonoBehaviour
             }
         }
 
+        if (Input.GetButton("Fire1") && Player.instance.GetIsAttack() == false)
+        {
+            Player.instance._ani.SetBool("IsAttack", true);
+            Player.instance._ani.SetInteger("AttackRan", Random.Range(1, 101));
+
+            Player.instance.SetIsAttack(true);
+            Player.instance.OnAtkZone();
+
+            Player.instance.GetAtkZone().GetComponent<AttackZone>().multiTarget = 1;
+        }
     }
 
     public bool GetIsPickable()

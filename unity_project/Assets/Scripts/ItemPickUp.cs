@@ -31,7 +31,7 @@ public class ItemPickUp : MonoBehaviour
         _col = GetComponent<BoxCollider2D>();
 
         //_rig.velocity = new Vector2(_rig.velocity.x, 5);
-        _rig.AddForce(Vector2.up * 250, ForceMode2D.Force);
+        _rig.AddForce(Vector2.up * 200, ForceMode2D.Force);
 
         if (item != null)
         {

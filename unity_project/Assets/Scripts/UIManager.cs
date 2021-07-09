@@ -7,19 +7,22 @@ using UnityEngine.EventSystems;
 
 public class UIManager : MonoBehaviour, IPointerClickHandler
 {
-    Slider _expBar;
-    Text _expText;
+    Slider                  _expBar;
+    Text                    _expText;
 
-    Slider _hpBar;
-    Text _hpText;
+    Slider                  _hpBar;
+    Text                    _hpText;
 
-    Slider _mpBar;
-    Text _mpText;
+    Slider                  _mpBar;
+    Text                    _mpText;
 
-    Text _lvText;
-    Text _nameText;
+    Text                    _lvText;
+    Text                    _nameText;
 
-    Player _player = Player.instance;
+    GameObject              _lvUpUI;
+
+    public static UIManager instance;
+    Player                  _player = Player.instance;
 
     private void Awake()
     {
@@ -34,6 +37,12 @@ public class UIManager : MonoBehaviour, IPointerClickHandler
 
         _lvText = GameObject.Find("LvText").GetComponent<Text>();
         _nameText = GameObject.Find("NameText").GetComponent<Text>();
+
+        _lvUpUI = GameObject.Find("LevelUpUI");
+
+        instance = this;
+
+        _lvUpUI.SetActive(false);
     }
 
     void Start()
@@ -58,6 +67,19 @@ public class UIManager : MonoBehaviour, IPointerClickHandler
         _mpText.text = (float)Player.instance.GetMp() + "/" + Player.instance.GetMaxMp();
 
         _lvText.text = "lv. " + Player.instance.GetLv();
+    }
+
+    public void OnLevelUpUI()
+    {
+        _lvUpUI.SetActive(true);
+        _lvUpUI.GetComponentInChildren<Text>().text = "레벨 " + Player.instance.GetLv();
+
+        Invoke("OffLevelUpUi", 2);
+    }
+
+    public void OffLevelUpUi()
+    {
+        _lvUpUI.SetActive(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)
