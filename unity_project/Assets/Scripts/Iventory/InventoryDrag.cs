@@ -24,6 +24,12 @@ public class InventoryDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEn
         leftStd = transform.position.x;
 
         originalVec = transform.position;
+
+    }
+
+    private void Start()
+    {
+        _inven.SetActive(false);
     }
 
     void Update()

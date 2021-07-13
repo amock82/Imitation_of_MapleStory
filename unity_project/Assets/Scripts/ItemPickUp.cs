@@ -50,13 +50,13 @@ public class ItemPickUp : MonoBehaviour
             Vector2 dir = _target.position - transform.position + Vector3.up * 0.5f;
             //dir.Normalize();
 
-            transform.Translate(dir * 0.1f);
+            transform.Translate(dir * Time.deltaTime * 3);
         }
         else
         {
             if (isUp == true)
             {
-                _col.size += Vector2.up * 0.004f;
+                _col.size += Vector2.up * Time.deltaTime * 0.2f;
 
                 if(_col.size.y > 0.46f)
                 {
@@ -65,7 +65,7 @@ public class ItemPickUp : MonoBehaviour
             }
             if (isUp == false)
             {
-                _col.size -= Vector2.up * 0.003f;
+                _col.size -= Vector2.up * Time.deltaTime * 0.2f;
 
                 if (_col.size.y < 0.26f)
                 {

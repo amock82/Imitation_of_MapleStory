@@ -25,12 +25,12 @@ public class InputManager : MonoBehaviour
     {
         if(pickUpTimer > 0)
         {
-            pickUpTimer -= Time.deltaTime;
-
-            isPickable = false;
+            pickUpTimer -= Time.deltaTime;         
         }
         else
         {
+            isPickable = false;
+
             if (Input.GetButton("PickUp"))
             {
                 isPickable = true;

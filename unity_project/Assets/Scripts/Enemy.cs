@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     public Rigidbody2D      _rig;
     public SpriteRenderer   _spRen;
     BoxCollider2D           _col2D;
+    public BoxCollider2D    _damageZone;
 
     Transform               _target = null;
     public Transform        _damagePos;
@@ -56,7 +57,7 @@ public class Enemy : MonoBehaviour
         _ani = GetComponent<Animator>();
         _rig = GetComponent<Rigidbody2D>();
         _spRen = GetComponent<SpriteRenderer>();
-        _col2D = GetComponent<BoxCollider2D>();
+        _col2D = GetComponentInChildren<BoxCollider2D>();
 
         _enemyUI = GetComponentInChildren<Canvas>().gameObject;
         _hpBar = GetComponentInChildren<Slider>();
@@ -251,6 +252,7 @@ public class Enemy : MonoBehaviour
             _target.gameObject.GetComponent<Player>().AddExp(exp);
 
             _col2D.enabled = false;
+            _damageZone.enabled = false;
 
             state = State.Die;
             isDie = true;
@@ -270,6 +272,8 @@ public class Enemy : MonoBehaviour
     public void Die()
     {
         Destroy(gameObject);
+
+        MapManager.instance.MonDie();
     }
 
     private void OnCollisionEnter2D(Collision2D collision) 

@@ -13,6 +13,8 @@ public class SlotDrag : MonoBehaviour
 
     bool isTrackingMouse = false;
 
+    float doubleClickTimer = 0;
+
     private void Awake()
     {
         instance = this;
@@ -23,9 +25,22 @@ public class SlotDrag : MonoBehaviour
         if (isTrackingMouse == true)
         {
             transform.position = Input.mousePosition;
-
-            Debug.Log(2);
         }
+
+        if (doubleClickTimer > 0)
+        {
+            doubleClickTimer -= Time.deltaTime;
+        }
+    }
+
+    public bool GetIsTrackingMouse()
+    {
+        return isTrackingMouse;
+    }
+
+    public float GetDoubleClickTimer()
+    {
+        return doubleClickTimer;
     }
 
     public void SetImage(Image _itemDrag)
@@ -43,11 +58,6 @@ public class SlotDrag : MonoBehaviour
         _image.color = color;
     }
 
-    public bool GetIsTrackingMouse()
-    {
-        return isTrackingMouse;
-    }
-
     public void SetIsTrackingMouse(bool value)
     {
         isTrackingMouse = value;
@@ -55,6 +65,7 @@ public class SlotDrag : MonoBehaviour
         if(value == true)
         {
             SetColor(0.5f);
+            doubleClickTimer = 0.5f;
         }
         else
         {

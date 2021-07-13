@@ -121,6 +121,10 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i <item[tap].Count; i++)
         {
             _slot[i].PutItem(item[tap][i]);
+            if(item[tap][i].itemAmount == 0)
+            {
+                item[tap][i].ChangeItem(Inventory.instance.emptyItem);
+            }
         }
 
         _mesoText.text = meso.ToString("N0");

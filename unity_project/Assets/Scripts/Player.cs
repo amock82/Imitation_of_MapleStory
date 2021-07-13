@@ -155,6 +155,7 @@ public class Player : MonoBehaviour
             if (isGround == true && isClimbJumped == false)
             {
                 _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed, _rig.velocity.y);
+                _ani.SetBool("IsHitFalling", false);
 
                 if (moveH != 0)
                 {
@@ -543,5 +544,25 @@ public class Player : MonoBehaviour
     public void SetIsAttack(bool value)
     {
         isAttack = value;
+    }
+
+    public void AddCurHp(int Hp, bool isRatio = false)
+    {
+        curHp += Hp;
+
+        if(curHp > maxHp)
+        {
+            curHp = maxHp;
+        }
+    }
+
+    public void AddCurMp(int Mp, bool isRatio = false)
+    {
+        curMp += Mp;
+
+        if (curMp > maxMp)
+        {
+            curMp = maxMp;
+        }
     }
 }

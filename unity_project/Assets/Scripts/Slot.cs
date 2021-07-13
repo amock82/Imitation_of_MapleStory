@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Dynamic;
 
-public class Slot : MonoBehaviour, IDropHandler, IPointerDownHandler, IPointerEnterHandler
+public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public Item     item;
     public int      itemCount;
@@ -89,38 +90,54 @@ public class Slot : MonoBehaviour, IDropHandler, IPointerDownHandler, IPointerEn
 
             isDown = true;
         }
+        else if (SlotDrag.instance.GetIsTrackingMouse() == true && SlotDrag.instance.GetDoubleClickTimer() > 0 && SlotDrag.instance.slotDrag.item.itemType != Item.ItemType.Loot)
+        {
+            if (item == SlotDrag.instance.slotDrag.item )
+            {
+                if (item.itemType == Item.ItemType.Consumable)
+                {
+                    item.itemConsumable.Use();
+
+                    Debug.Log("use");
+
+                    SlotDrag.instance.slotDrag.item.itemAmount -= 1;
+                }
+            }
+            else
+            {
+                Item tempItem = ScriptableObject.CreateInstance<Item>();
+
+                tempItem.ChangeItem(item);
+
+                item.ChangeItem(SlotDrag.instance.slotDrag.item);
+
+                //SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
+                SlotDrag.instance.slotDrag.item.ChangeItem(tempItem);
+            }
+
+            SlotDrag.instance.SetIsTrackingMouse(false);
+        }
         else if (SlotDrag.instance.GetIsTrackingMouse() == true)
         {
             if (item != null && SlotDrag.instance.slotDrag != null && item != SlotDrag.instance.slotDrag.item)
             {
-                Item tempItem = item;
+                Item tempItem = ScriptableObject.CreateInstance<Item>();
+
+                tempItem.ChangeItem(item);
 
                 item.ChangeItem(SlotDrag.instance.slotDrag.item);
 
-                SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
+                SlotDrag.instance.slotDrag.item.ChangeItem(tempItem);
             }
 
             SlotDrag.instance.SetIsTrackingMouse(false);
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerUp(PointerEventData eventData)
     {
         isDown = false;
-    }
 
-    public void OnDrop(PointerEventData eventData)
-    {
-        if (SlotDrag.instance.slotDrag.isDown == false)
-        {
-            if (item != null && SlotDrag.instance.slotDrag != null && item != SlotDrag.instance.slotDrag.item)
-            {
-                Item tempItem = item;
-
-                item.ChangeItem(SlotDrag.instance.slotDrag.item);
-
-                SlotDrag.instance.slotDrag.item.ChangeItem(Inventory.instance.emptyItem);
-            }
-        }
+        Debug.Log(1);
     }
 }
