@@ -2566,6 +2566,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1492309362122565736, guid: b2348c1178808fe49ac8a81365dddc15,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 6f3bc3480e830e644a64169e56dd834d, type: 2}
     - target: {fileID: 1492309362122565739, guid: b2348c1178808fe49ac8a81365dddc15,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5992,6 +5997,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77d3320cc3a1f0544a2e599dca13259f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _skillPrefep: {fileID: 8861861561086575631, guid: c11f08e2729bca44a9425c50469f4a07,
+    type: 3}
 --- !u!4 &2062731056
 Transform:
   m_ObjectHideFlags: 0
@@ -6851,6 +6858,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6200719176605877930, guid: e1a26693462a85f41b3be886746fb3b2,
+        type: 3}
+      propertyPath: m_Text
+      value: Lv. 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6200719177216400592, guid: e1a26693462a85f41b3be886746fb3b2,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -6991,6 +7003,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6200719178192902551, guid: e1a26693462a85f41b3be886746fb3b2,
+        type: 3}
+      propertyPath: m_Value
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6261786761677672158, guid: e1a26693462a85f41b3be886746fb3b2,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -7099,7 +7116,7 @@ PrefabInstance:
     - target: {fileID: 6896544318687121605, guid: e1a26693462a85f41b3be886746fb3b2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6896544319160574604, guid: e1a26693462a85f41b3be886746fb3b2,
         type: 3}

@@ -57,13 +57,18 @@ public class UIManager : MonoBehaviour, IPointerClickHandler
 
     void UIUpdate()
     {
-        _expBar.value = (float)Player.instance.GetExp() / Player.instance.GetMaxExp(Player.instance.GetLv() - 1);
-        _expText.text = Player.instance.GetExp() + " [" + (_expBar.value * 100).ToString("N3") + "%]";
+        float expRatio = (float)Player.instance.GetExp() / Player.instance.GetMaxExp(Player.instance.GetLv() - 1);
+        float hpRatio = (float)Player.instance.GetHp() / Player.instance.GetMaxHp();
+        float mpRatio = (float)Player.instance.GetMp() / Player.instance.GetMaxMp();
 
-        _hpBar.value = (float)Player.instance.GetHp() / Player.instance.GetMaxHp();
+        _expBar.value = Mathf.Lerp(_expBar.value, expRatio, Time.deltaTime * 2);
+
+        _expText.text = Player.instance.GetExp() + " [" + (expRatio * 100).ToString("N3") + "%]";
+
+        _hpBar.value = Mathf.Lerp(_hpBar.value, hpRatio, Time.deltaTime * 3);
         _hpText.text = (float)Player.instance.GetHp() + "/" + Player.instance.GetMaxHp();
 
-        _mpBar.value = (float)Player.instance.GetMp() / Player.instance.GetMaxMp();
+        _mpBar.value = Mathf.Lerp(_mpBar.value, mpRatio, Time.deltaTime * 3);
         _mpText.text = (float)Player.instance.GetMp() + "/" + Player.instance.GetMaxMp();
 
         _lvText.text = "lv. " + Player.instance.GetLv();
@@ -73,6 +78,10 @@ public class UIManager : MonoBehaviour, IPointerClickHandler
     {
         _lvUpUI.SetActive(true);
         _lvUpUI.GetComponentInChildren<Text>().text = "레벨 " + Player.instance.GetLv();
+
+        _expBar.value = (float)Player.instance.GetExp() / Player.instance.GetMaxExp(Player.instance.GetLv() - 1);
+        _hpBar.value = (float)Player.instance.GetHp() / Player.instance.GetMaxHp();
+        _mpBar.value = (float)Player.instance.GetMp() / Player.instance.GetMaxMp();
 
         Invoke("OffLevelUpUi", 2);
     }

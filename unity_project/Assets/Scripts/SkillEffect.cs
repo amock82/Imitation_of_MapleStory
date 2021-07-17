@@ -2,13 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackZone : MonoBehaviour
+public class SkillEffect : MonoBehaviour
 {
-    public int multiTarget = 1;
+    public Skill        _skillPrefap;
+
+    int multiTarget;
+
+    private void Awake()
+    {
+        multiTarget = _skillPrefap.multiTarget;
+
+        Player.instance.AddCurMp(-_skillPrefap.consumeMp);
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "EnemyBody" && multiTarget > 0)
+        if (collision.tag == "EnemyBody" && multiTarget > 0)
         {
             Enemy enemy = collision.GetComponentInParent<Enemy>();
 
@@ -28,19 +37,29 @@ public class AttackZone : MonoBehaviour
                 enemy._spRen.flipX = false;
             }
 
-            if (enemy.GetCurHp() > Player.instance.GetAtk())
+            if (enemy.GetCurHp() > Player.instance.GetAtk() * _skillPrefap.skillDamage / 100)
             {
                 enemy._rig.AddForce(new Vector2(100 * dir, 0), ForceMode2D.Force);
             }
             
             if (enemy.GetCurHp() != 0)
             {
-                enemy.OnDamage(Player.instance.GetAtk());
+                enemy.OnDamage(Player.instance.GetAtk() * _skillPrefap.skillDamage / 100);
 
                 multiTarget -= 1;
 
-                enemy.SetTarget(Player.instance.transform);
+                enemy.SetTarget(Player.instance.transform); 
             }
         }
+    }
+
+    public void OnCol()
+    {
+        GetComponent<BoxCollider2D>().enabled = true;
+    }
+
+    public void OffCol()
+    {
+        GetComponent<BoxCollider2D>().enabled = false;
     }
 }

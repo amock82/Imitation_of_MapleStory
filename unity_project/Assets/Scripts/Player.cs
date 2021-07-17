@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
     private bool            isWallRight = false;        // 인접한 벽이 플레이어의 오른쪽에 있는가
     private bool            isAttack = false;           // 공격중인가
     private bool            isDie = false;              // 사망했는가
+    private bool            isUseSkill = false;         // 스킬 사용중인가
 
     float                   hitDelay = 1f;              // 피격시 무적시간
     float                   hitTimer = 0;               // 피격시 hitDelay로 설정됨 0이하가 되면 피격 가능
@@ -52,6 +53,9 @@ public class Player : MonoBehaviour
 
     float                   maxMp = 50;                 // 최대마나
     float                   curMp = 50;                 // 현재마나
+
+    float                   atk = 10;                   // 공격력
+    float                   def;                        // 방어력
 
     public static Player instance;                      // 싱글톤 기법
 
@@ -138,7 +142,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (isAttack == true)
+            if (isAttack == true || isUseSkill == true)
             {
                 moveH = 0;
             }
@@ -243,11 +247,18 @@ public class Player : MonoBehaviour
 
     public void EndAttack()
     {
-        Player.instance._ani.SetBool("IsAttack", false);
+        _ani.SetBool("IsAttack", false);
 
         isAttack = false;
 
         _atkZone.SetActive(false);
+    }
+
+    public void EndSkill()
+    {
+        _ani.SetBool("IsUseSkill", false);
+
+        isUseSkill = false;
     }
 
     private void OnTriggerStay2D(Collider2D collision)      // 데미지를 주는 작용은 적 객체의 기능으로 옮김
@@ -402,6 +413,8 @@ public class Player : MonoBehaviour
 
         curHp = maxHp;
         curMp = maxMp;
+
+        atk += 5;
     }
 
     public void Die()
@@ -477,9 +490,19 @@ public class Player : MonoBehaviour
         return isAttack;
     }
 
+    public bool GetIsUseSkill()
+    {
+        return isUseSkill;
+    }
+
     public GameObject GetAtkZone()
     {
         return _atkZone;
+    }
+
+    public float GetAtk()
+    {
+        return atk;
     }
 
     public void SetIsGround(bool value)
@@ -544,6 +567,11 @@ public class Player : MonoBehaviour
     public void SetIsAttack(bool value)
     {
         isAttack = value;
+    }
+
+    public void SetIsUseSkill(bool value)
+    {
+        isUseSkill = value;
     }
 
     public void AddCurHp(int Hp, bool isRatio = false)

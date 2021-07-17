@@ -19,6 +19,8 @@ public class Item : ScriptableObject
     public string           itemName;           // 아이템 이름
     public ItemType         itemType;           // 아이템 유형
     public Sprite           itemImage;          // 아이템 이미지
+    [TextArea]public string itemDetail;         // 아이템 설명
+
     public GameObject       itemPrefab;         // 아이템 객체
 
     public int              itemAmount;         // 아이템 갯수
@@ -31,6 +33,8 @@ public class Item : ScriptableObject
         itemName = tempItem.itemName;
         itemType = tempItem.itemType;
         itemImage = tempItem.itemImage;
+        itemDetail = tempItem.itemDetail;
+
         itemPrefab = tempItem.itemPrefab;
 
         itemAmount = tempItem.itemAmount;

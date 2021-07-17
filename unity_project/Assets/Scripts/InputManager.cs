@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
 
     public static InputManager instance;
 
+    public GameObject _skillPrefep;
+
     private void Awake()
     {
         instance = this;
@@ -49,6 +51,20 @@ public class InputManager : MonoBehaviour
 
             Player.instance.GetAtkZone().GetComponent<AttackZone>().multiTarget = 1;
         }
+        else if (Input.GetButton("Skill") && Player.instance.GetIsUseSkill() == false && Player.instance.GetMp() >= 20)
+                                                                                        // 만든 스킬의 mp소모량 = 20
+        {
+            Player.instance._ani.SetBool("IsUseSkill", true);
+            Player.instance._ani.SetTrigger("UseSkill");
+
+            Player.instance.SetIsUseSkill(true);
+
+            GameObject skillObj = Instantiate(_skillPrefep, Player.instance.transform);
+
+            skillObj.transform.position = Player.instance.transform.position + Vector3.up * 0.82f;
+            Destroy(skillObj, 1);
+        }
+        
     }
 
     public bool GetIsPickable()

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Dynamic;
 
-public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Item     item;
     public int      itemCount;
@@ -139,5 +139,23 @@ public class Slot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         isDown = false;
 
         Debug.Log(1);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)      // 슬릇에 아이템이 있는경우 마우스를 올리면 아이템 정보 확인 UI 띄우기
+    {
+        if (item.itemName != "Empty")
+        {
+            ItemDetailUI.instance.SetUIActive(true);
+
+            ItemDetailUI.instance.SetItemName(item.itemName);
+            ItemDetailUI.instance.SetItemDetail(item.itemDetail);     
+
+            ItemDetailUI.instance.SetItemImage(itemImage.sprite);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        ItemDetailUI.instance.SetUIActive(false);
     }
 }

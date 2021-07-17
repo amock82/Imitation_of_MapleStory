@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc5aa1835d71db4a91711957b459bc9, type: 3}
+  m_Name: SlashBlast
+  m_EditorClassIdentifier: 
+  skillName: "\uC2AC\uB798\uC2DC \uBE14\uB7EC\uC2A4\uD2B8"
+  skillType: 0
+  skillImage: {fileID: 0}
+  skillDetail: "[\uB9C8\uC2A4\uD130 \uB808\uBCA8 : 20]\nMP\uB97C \uC18C\uBE44\uD558\uC5EC
+    \uC8FC\uC704\uC758 \uC801 \uB2E4\uC218\uB97C \uB3D9\uC2DC\uC5D0 \uACF5\uACA9\uD55C\uB2E4."
+  skillPrefab: {fileID: 8861861561086575631, guid: c11f08e2729bca44a9425c50469f4a07,
+    type: 3}
+  multiTarget: 6
+  consumeMp: 0
+  skillDamage: 100
