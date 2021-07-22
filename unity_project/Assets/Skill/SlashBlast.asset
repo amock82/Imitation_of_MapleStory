@@ -20,5 +20,5 @@ MonoBehaviour:
   skillPrefab: {fileID: 8861861561086575631, guid: c11f08e2729bca44a9425c50469f4a07,
     type: 3}
   multiTarget: 6
-  consumeMp: 0
+  consumeMp: 20
   skillDamage: 100

@@ -28,6 +28,7 @@ public class MainCamera : MonoBehaviour
 
         _cameraTf.position = lerpPos;
 
+        // 객체의 위치가 특정 범위를 벗어나지 못하게 함 (맵 외부를 볼 수 없게)
         // 맵에따라 다른 값이므로, 추후에 맵정보에서 받아올 수치들
         if (transform.position.x <= -9.7f)
         {

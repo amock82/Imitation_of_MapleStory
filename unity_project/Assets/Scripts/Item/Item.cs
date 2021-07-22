@@ -28,6 +28,7 @@ public class Item : ScriptableObject
 
     public ItemConsumable   itemConsumable;     // 아이템 사용효과가 담긴 객체
 
+    // 아이템 변경 함수
     public void ChangeItem(Item tempItem)
     {
         itemName = tempItem.itemName;

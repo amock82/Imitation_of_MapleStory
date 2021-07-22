@@ -73,11 +73,13 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        // 이동속도 설정(100-140의 스피드값에 가중치를 곱함)
         move_Speed = 0.8f * default_Speed;
     }
 
     void Update()
     {
+        // 사망시 실행 X
         if (isDie == false)
         {
             Timer();
@@ -88,25 +90,30 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        // 사망시 실행 X
         if (isDie == false)
         {
             Move();
         }
     }
 
+    // 타이머 제어
     private void Timer()
     {
-        //타이머 제어
+        // 피격시 무적시간 조절
         if (hitTimer > 0)
         {
             hitTimer -= Time.deltaTime;
         }
 
+        // 공중에 뜬 상태를 판단하는 타이머
         if (isGround)
             groundTimer = 0;
         else
             groundTimer += Time.deltaTime;
 
+        // 사다리 상호작용 중이면 사다리타이머 값을 갱신
+        // 이 코드는 사다리 이용시 애니매이션의 재생을 제어하기 위해 작성됨
         if (isClimb == true)
         {
             climbTimer += Time.deltaTime;
@@ -123,11 +130,14 @@ public class Player : MonoBehaviour
         float moveH = Input.GetAxis("Horizontal");      // 좌우 방향키 입력값
         float moveV = Input.GetAxisRaw("Vertical");     // 상하 방향키 입력값 (-1, 0, 1)
 
+        // 사다리 상호작용 중이면
         if (isClimb == true)
         {
+            // Y축이동
             _rig.velocity = new Vector2(0, moveV * Time.deltaTime * move_Speed);
 
-
+            // 사다리 타는 중 애니매이션 제어
+            // 사다리 이용중 멈췄을 때, 애니매이션이 재생되면 안됨
             if (climbTimer > 0.3f)
             {
                 climbTimer = 0;
@@ -142,11 +152,14 @@ public class Player : MonoBehaviour
         }
         else
         {
+            // 공격 중일 때 x축 이동값을 0으로 고정
             if (isAttack == true || isUseSkill == true)
             {
                 moveH = 0;
             }
 
+            // 입력받은 x축 이동값에 따라 플래이어의 회전값을 변경 (좌우반전)
+            // SpriteRenderer의 FilpX 기능을 이용하지 않은 것은, 사용한 스킬도 함께 방향이 변환되어야 하기 때문
             if (moveH > 0)
             {
                 transform.rotation = new Quaternion(0, 0, 0, 0);
@@ -156,11 +169,13 @@ public class Player : MonoBehaviour
                 transform.rotation = new Quaternion(0, 180, 0, 0);
             }
 
+            // 땅에 있고, 사다리 이용중이 아니면
             if (isGround == true && isClimbJumped == false)
             {
-                _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed, _rig.velocity.y);
-                _ani.SetBool("IsHitFalling", false);
+                // 이동속도와 입력값에 기반해서 X축으로 움직임
+                _rig.velocity = new Vector2(moveH * Time.deltaTime * move_Speed, _rig.velocity.y);         
 
+                // 방향키(좌,우) 입력값이 0이 아니면, 이동 애니매이션 재생
                 if (moveH != 0)
                 {
                     _ani.SetBool("IsMove", true);
@@ -203,19 +218,24 @@ public class Player : MonoBehaviour
             // 일반적인 점프/하향점프
             if (Input.GetButton("Jump") && isGround == true && isClimb == false && isClimbJumped == false)
             {
+                // 아래키가 눌리고, 현재 플래이어가 있는 곳이 '지형(Terrain)'일 경우 (땅(Ground)과는 다름)
                 if (moveV < 0 && isTerrain == true)
                 {
+                    // 하향 점프 코루틴 사용 (하향점프중 일시적으로 지형과 플래이어 발판의 충돌을 무시)
                     StartCoroutine(DownJump());
                 }
                 else if (isClimb == false)
                 {
+                    // 점프 딜레이 코루틴 사용 (연속으로 점프키가 입력되는 경우, 약간의 딜레이를 줌)
                     StartCoroutine(JumpDelay());
                 }
             }
 
+            // 사다리 이용중 점프키가 눌릴 경우
             if (Input.GetButtonDown("Jump") && isClimb == true && moveH != 0)
             {
                 SetIsClimb(false);
+                // 연속으로 점프가 실행되는 것을 방지
                 StartCoroutine(JumpClimb());
 
                 _rig.velocity = new Vector2(2 * moveH, default_JumpForce * 0.020f);
@@ -233,7 +253,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void ChangeAni()    // 추후 애니매이션 변경 코드를 모두 옮겨놓을 것
+    void ChangeAni()    // 애니매이션 변경 코드
     {
         if(isClimb == true)
         {
@@ -243,8 +263,14 @@ public class Player : MonoBehaviour
         {
             _ani.SetBool("IsClimb", false);
         }
+
+        if (isGround == true)
+        {
+            _ani.SetBool("IsHitFalling", false);
+        }
     }
 
+    // 공격 애니매이션이 끝날 때 호출 됨
     public void EndAttack()
     {
         _ani.SetBool("IsAttack", false);
@@ -254,6 +280,7 @@ public class Player : MonoBehaviour
         _atkZone.SetActive(false);
     }
 
+    // 스킬사용이 끝날 때 호출 됨
     public void EndSkill()
     {
         _ani.SetBool("IsUseSkill", false);
@@ -261,31 +288,11 @@ public class Player : MonoBehaviour
         isUseSkill = false;
     }
 
-    private void OnTriggerStay2D(Collider2D collision)      // 데미지를 주는 작용은 적 객체의 기능으로 옮김
-    {
-        //if (collision.tag == "DamageZone" && hitTimer <= 0)     // 데미지를 입을 때의 작용
-        //{
-        //    isGround = false;            
-
-        //    if (collision.transform.position.x < transform.position.x)
-        //    {
-        //        StartCoroutine(Hitjudgment(1, verForce, horForce));
-        //        //_rig.velocity = new Vector2(Time.deltaTime * 100 - _rig.velocity.x * 100, Time.deltaTime * 100 + _rig.velocity.y);
-        //    }
-
-        //    if (collision.transform.position.x > transform.position.x)
-        //    {
-        //        //_rig.AddForce(new Vector2(Time.deltaTime * (-horForce) - _rig.velocity.x * 100, Time.deltaTime * verForce), ForceMode2D.Impulse);
-        //        StartCoroutine(Hitjudgment(-1, verForce, horForce));
-        //    }
-
-        //    hitTimer = hitDelay;
-        //}
-    }
-
+    // 피격 시 넉백 판정 코루틴 (바닥에서 x, y축의 힘을 한꺼번에 처리할 경우 제대로 처리되지 않아, 시간차를 두고 따로 처리)
     public IEnumerator Hitjudgment(int directionX, float verForce = 120, float horForce = 80)
     {
-        //_rig.AddForce(new Vector2(0, verForce), ForceMode2D.Force);
+        // 점프 중에 피격시, 너무 큰 힘을 받는 것을 방지
+        // Y축 넉백
         if (verForce * 0.01f + _rig.velocity.y > 3)
         {
             _rig.velocity = new Vector2(_rig.velocity.x, 3);
@@ -296,11 +303,14 @@ public class Player : MonoBehaviour
             _rig.velocity = new Vector2(_rig.velocity.x, verForce * 0.01f + _rig.velocity.y);
         }
 
+        // 0.05초 딜레이
         yield return new WaitForSeconds(0.05f);
 
+        // X축 넉백
         _rig.AddForce(new Vector2(horForce * directionX, 0), ForceMode2D.Force);
     }
 
+    // 하향점프 코루틴
     IEnumerator DownJump()
     {
         if (isDownJump == false)
@@ -308,6 +318,7 @@ public class Player : MonoBehaviour
             isDownJump = true;
             _rig.velocity = new Vector2(0, default_JumpForce * 0.02f);
 
+            // 0.5초 뒤에 플레이어 발판 콜라이더를 활성화
             yield return new WaitForSeconds(0.5f);
 
             isDownJump = false;
@@ -315,6 +326,9 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 점프처리 코루틴
+    // 연속으로 점프값이 들어왔을 때, 이동속도에 문제가 생기는 걸 해결하기위해
+    // 시간차를 두고 점프가 되도록 처리
     IEnumerator JumpDelay()
     {
         if (isJumped == false)
@@ -332,6 +346,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 사다리 이용중 점프시 다시 사다리가 타지는 것을 방지
     IEnumerator JumpClimb()
     {
         if(isClimbJumped == false)
@@ -344,6 +359,8 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 사다리 이용 또는 이용중지시 중력값 조절 이후 실행
+    // 플레이어 발판 비활성화
     IEnumerator ClimbDelay(bool value)
     {
         if (value == false)
@@ -364,6 +381,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 플레이어가 공중에 0.3초 이상 있었다면, 애니매이션 변경
     IEnumerator FallingDelay()
     {
         yield return new WaitForSeconds(0.3f);
@@ -372,10 +390,12 @@ public class Player : MonoBehaviour
             _ani.SetBool("IsHitFalling", true);
     }
 
+    // 플레이어에게 데미지를 줌 (데미지를 주는 객체에서 호출)
     public void OnDamage(float damage)
     {
         curHp -= damage;
 
+        // 피격시 무적시간 설정
         hitTimer = hitDelay;
 
         if (curHp <= 0)
@@ -386,24 +406,30 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 공격 범위 활성화
     public void OnAtkZone()
     {
         _atkZone.SetActive(true);
     }
 
+    // 경험치 추가 함수
     public void AddExp(int getExp)
     {
         exp += getExp;
 
-        for(; exp > maxExp[lv - 1]; )
+        // 레벨업 경험치 충족시 경험치 차감후 레벨업
+        // 위 과정을 반복
+        for (; exp > maxExp[lv - 1]; )
         {
             exp -= maxExp[lv - 1];
 
             LevelUP();
+            // 레벨업 UI 활성화
             UIManager.instance.OnLevelUpUI();
         }
     }
 
+    // 레벨업 함수 (각종 스테이터스 향상)
     public void LevelUP()
     {
         lv++;
@@ -417,16 +443,21 @@ public class Player : MonoBehaviour
         atk += 5;
     }
 
+    // 플레이어 체력이 0이하가 되면 실행됨
     public void Die()
     {
+        // 비석 객체
         GameObject grave = Instantiate(_grave);
 
+        // 비석위치 초기화
         grave.transform.position = transform.position + Vector3.up * 5;
         grave.GetComponent<Grave>().startPos = grave.transform.position;
 
+        // 플레이어 사망 애니매이션 재생
         isDie = true;
         _ani.SetBool("IsDie", true);
 
+        // 충돌체 비활성화
         _col2D.enabled = false;
     }
 
@@ -509,6 +540,7 @@ public class Player : MonoBehaviour
     {
         isGround = value;
 
+        // 관련 애니매이션 설정
         if (isGround == true)
         {
             _ani.SetBool("IsJump", false);
