@@ -32,11 +32,24 @@ public class CheckJumped : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Ground" || collision.transform.tag == "Terrain")
+        {
+            Player.instance.SetIsGround(true);
+
+            if (collision.transform.tag == "Terrain")
+            {
+                Player.instance.SetIsTerrain(true);
+            }
+        }
+    }
+
     private void OnCollisionExit2D(Collision2D collision)  // 충돌에서 벗어나는 대상이 바닥/지형이면 플레이어 바닥 충돌체 OFF
     {
         if (collision.transform.tag == "Ground" || collision.transform.tag == "Terrain")
         {
-            Player.instance.SetIsGround(false);
+            Player.instance.SetIsGround(false);           
 
             if (collision.transform.tag == "Terrain")
             {
