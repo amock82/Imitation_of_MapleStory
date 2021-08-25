@@ -29,7 +29,7 @@ public class MiniMapUI : MonoBehaviour, IDragHandler, IBeginDragHandler
     // 미니맵 UI 드래그 시 위치 이동
     public void OnDrag(PointerEventData eventData)
     {
-        if (eventData.position.y <= upStd + GetComponent<RectTransform>().rect.height / 2)
+        if (0 <= eventData.position.y && eventData.position.y <= 768 && 0 <= eventData.position.x && eventData.position.x <= 1366)
         {
             originalVec += (eventData.position - dragPoint);
 

@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
     float                   atk = 10;                   // 공격력
     float                   def;                        // 방어력
 
+    GameObject              grave;                      // 사망시 생성되는 비석 객체
+
     public static Player instance;                      // 싱글톤 기법
 
     private void Awake()
@@ -446,7 +448,7 @@ public class Player : MonoBehaviour
     public void Die()
     {
         // 비석 객체
-        GameObject grave = Instantiate(_grave);
+        grave = Instantiate(_grave);
 
         // 비석위치 초기화
         grave.transform.position = transform.position + Vector3.up * 5;
@@ -458,6 +460,29 @@ public class Player : MonoBehaviour
 
         // 충돌체 비활성화
         _col2D.enabled = false;
+
+        // 만약 점프했을 때, 바닥과 충돌 불가능한 상태가 되는 것을 방지
+        CheckJumped.instance._col2D.enabled = true;
+
+        // 점프중에 죽을 경우, X축 이동을 막음
+        _rig.velocity = new Vector2(0, _rig.velocity.y);
+
+        UIManager.instance.OnDeathUI();
+    }
+
+    public void Revive()
+    {
+        UIManager.instance.OffDeathUI();
+
+        Destroy(grave);
+
+        curHp = maxHp;
+        curMp = maxMp;
+
+        _ani.SetBool("IsDie", false);
+        isDie = false;
+
+        _col2D.enabled = true;
     }
 
     public int GetLv()

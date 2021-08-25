@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour
 {
+    public string mapName;
+    public string regionName;
+    public Sprite mapIcon;
+
     public GameObject _monPrefep;       // 몬스터 객체 (원본)
     public Transform[] _respawnPoint;   // 몬스터 리스폰 위치 배열
 
@@ -65,5 +69,15 @@ public class MapManager : MonoBehaviour
     public void MonDie()
     {
         monNum--;
+    }
+
+    public string GetMapName()
+    {
+        return mapName;
+    }
+
+    public string GetRegionName()
+    {
+        return regionName;
     }
 }

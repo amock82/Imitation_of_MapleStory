@@ -19,7 +19,13 @@ public class UIManager : MonoBehaviour
     Text                    _lvText;        // 레벨 표기
     Text                    _nameText;      // 닉네임 표기
 
+    Text                    _mapNameText;   // 맵 이름 표기
+    Image                   _mapIcon;       // 맵 아이콘 표기
+
     GameObject              _lvUpUI;        // 레벨업 시 표기되는 UI
+    GameObject              _deathUI;       // 사망시 표기되는 UI
+
+    GameObject              _map;           // 맵 객체
 
     public static UIManager instance;
     Player                  _player = Player.instance;
@@ -39,10 +45,17 @@ public class UIManager : MonoBehaviour
         _nameText = GameObject.Find("NameText").GetComponent<Text>();
 
         _lvUpUI = GameObject.Find("LevelUpUI");
+        _deathUI = GameObject.Find("DeathUI");
+
+        _map = GameObject.Find("Map");
+
+        _mapNameText = GameObject.Find("MapNameUI").GetComponentInChildren<Text>();
+        _mapIcon = GameObject.Find("MapIcon").GetComponent<Image>();
 
         instance = this;
 
         _lvUpUI.SetActive(false);
+        _deathUI.SetActive(false);
     }
 
     void Start()
@@ -76,6 +89,9 @@ public class UIManager : MonoBehaviour
 
         // 레벨 Text 갱신
         _lvText.text = "lv. " + Player.instance.GetLv();
+
+        _mapNameText.text = _map.GetComponent<MapManager>().GetMapName() + "\n" + _map.GetComponent<MapManager>().GetRegionName();
+        _mapIcon.sprite = _map.GetComponent<MapManager>().mapIcon;
     }
 
     // 레벨업 시에 실행
@@ -97,5 +113,20 @@ public class UIManager : MonoBehaviour
     public void OffLevelUpUi()
     {
         _lvUpUI.SetActive(false);
+    }
+
+    // 플레이어 사망시 실행
+    public void OnDeathUI()
+    {
+        _deathUI.SetActive(true);
+
+        _deathUI.transform.position = new Vector2(683, 384);
+        _deathUI.GetComponent<DragUI>().InitOriginalVec();
+    }
+
+    // 사망 UI 비활성화 함수
+    public void OffDeathUI()
+    {
+        _deathUI.SetActive(false);
     }
 }
